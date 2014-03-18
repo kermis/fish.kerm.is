@@ -1,5 +1,5 @@
 ;
-jQuery(function($){    
+jQuery(function($){
     'use strict';
 
     /**
@@ -622,7 +622,40 @@ jQuery(function($){
 
     };
 
+    //devicemotion
+    var movement ={
+  if (window.DeviceMotionEvent && !canHandleOrientation) {
+window.addEventListener('devicemotion', handleMotion, false);
+}
+
+function handleMotion(event){
+if(event.acceleration){
+//requires a gyroscope to work.
+console.log("Motion Acceleration: " +  event.acceleration.x + ", " +  event.acceleration.y + ", " +  event.acceleration.z);
+}
+else{
+//this is for iPhone 3GS or a device with no gyroscope, and includes gravity.
+console.log("Motion AccelerationGravity: " + event.accelerationIncludingGravity.x + ", " + event.accelerationIncludingGravity.y + ", " + event.accelerationIncludingGravity.z);
+}
+}
+  }
+
     IO.init();
     App.init();
 
 }($));
+
+if (window.DeviceMotionEvent && !canHandleOrientation) {
+window.addEventListener('devicemotion', handleMotion, false);
+}
+
+function handleMotion(event){
+if(event.acceleration){
+//requires a gyroscope to work.
+console.log("Motion Acceleration: " +  event.acceleration.x + ", " +  event.acceleration.y + ", " +  event.acceleration.z);
+}
+else{
+//this is for iPhone 3GS or a device with no gyroscope, and includes gravity.
+console.log("Motion AccelerationGravity: " + event.accelerationIncludingGravity.x + ", " + event.accelerationIncludingGravity.y + ", " + event.accelerationIncludingGravity.z);
+}
+}

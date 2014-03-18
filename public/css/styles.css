@@ -8,11 +8,13 @@ Dark Purple : #A22FB0
 */
 
 html, body {
-    background-color: #78BD4C;
+    background-color: lightblue;
     height: 100%;
     width: 100%;
     margin: 0;
     padding: 0;
+    font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+    font-weight:100;
 }
 
 
@@ -28,12 +30,11 @@ html, body {
     width: 49%;
     margin-bottom: 0;
     color: #ECFFE0;
-    font-family: 'Quicksand', sans-serif;
-    font-weight: 700;
+    font-weight: 200;
     font-size: 2em;
     line-height: 1.2;
     text-align: center;
-    background-color: #8AD453;
+    background-color: darkblue;
     white-space: nowrap;
     vertical-align: middle;
     cursor: pointer;
@@ -53,7 +54,7 @@ html, body {
 
 .btn:hover,
 .btn:focus {
-    color: #AE37B2;
+/*    color: #AE37B2;*/
     text-decoration: none;
 }
 
@@ -83,8 +84,8 @@ html, body {
 }
 
 .titleWrapper {
-    font-family: 'Quicksand', sans-serif;
-    font-weight: 400;
+/*    font-family: 'Quicksand', sans-serif;*/
+    font-weight: 100;
     position: absolute;
     height: 50%;
     width: 96%;
@@ -99,9 +100,9 @@ html, body {
     margin: 0px auto;
     text-align: center;
     width: 100%;
-    font-family: 'Quicksand', sans-serif;
+/*    font-family: 'Quicksand', sans-serif;*/
     color: #ECFFE0;
-    font-weight: 300;
+    font-weight: 100;
 }
 
 .buttons {
@@ -115,7 +116,7 @@ html, body {
    ****************************** */
 
 .createGameWrapper, .joinGameWrapper, .gameOver {
-    font-family: 'Quicksand', sans-serif;
+/*    font-family: 'Quicksand', sans-serif;*/
     margin: 0 auto;
     text-align: center;
 }
@@ -141,7 +142,7 @@ html, body {
     padding: 10px;
     width: 200px;
     height: 60px;
-    font-family: 'Quicksand', sans-serif;
+/*    font-family: 'Quicksand', sans-serif;*/
     color: #A22FB0;
     font-weight: 300;
     font-size: 54px;
@@ -228,7 +229,7 @@ html, body {
 
 /* Absolute Centering: http://coding.smashingmagazine.com/2013/08/09/absolute-horizontal-vertical-centering-css/ */
 #wordArea {
-    font-family: 'Quicksand', sans-serif;
+/*    font-family: 'Quicksand', sans-serif;*/
     font-weight: 400;
     position: absolute;
     height: 50%;
@@ -248,7 +249,7 @@ html, body {
 #hostWord h2, #btnPlayerRestart h3 {
     font-size: 161px;
     line-height: 1em;
-    font-family: 'Quicksand', sans-serif;
+/*    font-family: 'Quicksand', sans-serif;*/
     font-weight: 400;
     margin: 0;
     padding: 0;
@@ -317,5 +318,3 @@ html, body {
     position: fixed;
     bottom: 0;
 }
-
-
