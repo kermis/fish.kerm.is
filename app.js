@@ -62,6 +62,8 @@ function handler (req, res) {
     return res.send('app running');
 }
 
+io.set( 'origins', '*:*' );
+
 io.sockets.on("connection", function(socket) {
     // This will run when a client is connected
 
