@@ -51,29 +51,60 @@
 //   })
 // });
 //////////////////////////////////////////////////////////////
-var fs = require("fs"),
-    app = require("http").createServer(handler), // handler defined below
-    io = require("socket.io").listen(app, { log: false }),
-    theport = process.env.PORT || 2000;
+// var fs = require("fs"),
+//     app = require("http").createServer(handler), // handler defined below
+//     io = require("socket.io").listen(app, { log: false }),
+//     theport = process.env.PORT || 2000;
 
-app.listen(theport);
+// app.listen(theport);
 
-function handler (req, res) {
-    return res.send('app running');
-}
+// function handler (req, res) {
+//     return res.send('app running');
+// }
 
-io.set( 'origins', '*.*:*' );
+// io.set( 'origins', '*.*:*' );
 
-io.sockets.on("connection", function(socket) {
-    // This will run when a client is connected
+// io.sockets.on("connection", function(socket) {
+//     // This will run when a client is connected
 
 
-    // This is a listener to the signal "something"
-    socket.on("something", function(data) {
-        // This will run when the client emits a "something" signal
+//     // This is a listener to the signal "something"
+//     socket.on("something", function(data) {
+//         // This will run when the client emits a "something" signal
+//     });
+
+//     // This is a signal emitter called "something else"
+//     socket.emit("something else", {hello: "Hello, you are connected"});
+// });
+//
+var http = require('http');
+var sockjs = require('sockjs');
+var node_static = require('node-static');
+
+// 1. Echo sockjs server
+var sockjs_opts = {sockjs_url: "http://cdn.sockjs.org/sockjs-0.3.min.js"};
+
+var sockjs_echo = sockjs.createServer(sockjs_opts);
+sockjs_echo.on('connection', function(conn) {
+    conn.on('data', function(message) {
+        conn.write(message);
     });
-
-    // This is a signal emitter called "something else"
-    socket.emit("something else", {hello: "Hello, you are connected"});
 });
+
+// 2. Static files server
+var static_directory = new node_static.Server(__dirname);
+
+// 3. Usual http stuff
+var server = http.createServer();
+server.addListener('request', function(req, res) {
+    static_directory.serve(req, res);
+});
+server.addListener('upgrade', function(req,res){
+    res.end();
+});
+
+sockjs_echo.installHandlers(server, {prefix:'/echo'});
+
+console.log(' [*] Listening on 0.0.0.0:9999' );
+server.listen(9999, '0.0.0.0');
 
