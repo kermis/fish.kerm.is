@@ -19,6 +19,10 @@ app.configure(function() {
     app.use(express.static(path.join(__dirname,'public')));
 });
 
+app.get('/',function(req,res){
+	res.send('app is running <br><br><br>&copy;Kerm.is 2014')
+})
+
 // Create a Node.js based http server on port 8080
 var server = require('http').createServer(app).listen(8080);
 
