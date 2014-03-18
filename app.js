@@ -106,5 +106,5 @@ server.addListener('upgrade', function(req,res){
 sockjs_echo.installHandlers(server, {prefix:'/echo'});
 
 console.log(' [*] Listening on 0.0.0.0:9999' );
-server.listen(9999);
+server.listen();
 
