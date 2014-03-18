@@ -38,6 +38,7 @@
 //     game.initGame(io, socket);
 // });
 
+//////////////////////////////////////////////////////////////
 // var io = require('socket.io').listen(3728);
 
 // io.sockets.on('connection', function (socket) {
@@ -49,24 +50,23 @@
 //   	console.Log('new room', data)
 //   })
 // });
+//////////////////////////////////////////////////////////////
+var server = http.createServer(app);
+server.listen(port);
 
-var express = require('express')
-    , app = express()
-    , server = require('http').createServer(app)
-    , io = require('socket.io').listen(server)
-    , dgram = require('dgram');
+var wss = new WebSocketServer({server: server});
+console.log('websocket server created');
+wss.on('connection', function(ws) {
+  var id = setInterval(function() {
+    ws.send(JSON.stringify(new Date()), function() {  });
+  }, 1000);
 
-server.listen(3728);
+  console.log('websocket connection open');
 
-var client = dgram.createSocket('udp4');
-var message = new Buffer("100 101 102");
-
-app.use(express.static(__dirname + '/'));
-
-io.sockets.on('connection', function(socket) {
-    console.log("Server Connected");
-    socket.on('message', function(data) {
-        console.log(data);
-        client.send(message, 0, message.length, 8888, '192.168.1.1')
-    });
+  ws.on('close', function() {
+    console.log('websocket connection close');
+    clearInterval(id);
+  });
 });
+
+
