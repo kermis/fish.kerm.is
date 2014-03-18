@@ -51,22 +51,27 @@
 //   })
 // });
 //////////////////////////////////////////////////////////////
-var server = http.createServer(app);
-server.listen(port);
+var fs = require("fs"),
+    app = require("http").createServer(handler), // handler defined below
+    io = require("socket.io").listen(app, { log: false }),
+    theport = process.env.PORT || 2000;
 
-var wss = new WebSocketServer({server: server});
-console.log('websocket server created');
-wss.on('connection', function(ws) {
-  var id = setInterval(function() {
-    ws.send(JSON.stringify(new Date()), function() {  });
-  }, 1000);
+app.listen(theport);
 
-  console.log('websocket connection open');
+function handler (req, res) {
+    return res.send('app running');
+}
 
-  ws.on('close', function() {
-    console.log('websocket connection close');
-    clearInterval(id);
-  });
+io.sockets.on("connection", function(socket) {
+    // This will run when a client is connected
+
+
+    // This is a listener to the signal "something"
+    socket.on("something", function(data) {
+        // This will run when the client emits a "something" signal
+    });
+
+    // This is a signal emitter called "something else"
+    socket.emit("something else", {hello: "Hello, you are connected"});
 });
-
 
