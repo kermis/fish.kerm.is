@@ -38,14 +38,35 @@
 //     game.initGame(io, socket);
 // });
 
-var io = require('socket.io').listen(3728);
+// var io = require('socket.io').listen(3728);
 
-io.sockets.on('connection', function (socket) {
-  socket.emit('news', { hello: 'world' });
-  socket.on('my other event', function (data) {
-    console.log(data);
-  });
-  socket.on('new room', function(data){
-  	console.Log('new room', data)
-  })
+// io.sockets.on('connection', function (socket) {
+//   socket.emit('news', { hello: 'world' });
+//   socket.on('my other event', function (data) {
+//     console.log(data);
+//   });
+//   socket.on('new room', function(data){
+//   	console.Log('new room', data)
+//   })
+// });
+
+var express = require('express')
+    , app = express()
+    , server = require('http').createServer(app)
+    , io = require('socket.io').listen(server)
+    , dgram = require('dgram');
+
+server.listen(3728);
+
+var client = dgram.createSocket('udp4');
+var message = new Buffer("100 101 102");
+
+app.use(express.static(__dirname + '/'));
+
+io.sockets.on('connection', function(socket) {
+    console.log("Server Connected");
+    socket.on('message', function(data) {
+        console.log(data);
+        client.send(message, 0, message.length, 8888, '192.168.1.1')
+    });
 });
