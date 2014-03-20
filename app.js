@@ -39,6 +39,7 @@ io.set('log level', 1);
 // io = socketio.listen(server);
 //
 var room;
+var roomio;
 
 // handle incoming connections from clients
 io.sockets.on('connection', function(socket) {
@@ -48,22 +49,25 @@ io.sockets.on('connection', function(socket) {
     });
     socket.on('room', function(room) {
     	room = room;
-        socket.join(room);
+    	roomio = room;
+        socket.join(roomio);
+        console.log('room room:', roomio)
     });
 
     socket.on('message', function(data){
+    	console.log('currentroom: ', roomio);
 		console.log(data);
-		io.sockets.in(room).emit('message', data);
+		io.sockets.in(roomio).emit('message', data);
 	})
 
 	socket.on('test', function(data){
 		console.log(data);
-		io.sockets.in(room).emit('test', data);
+		io.sockets.in(roomio).emit('test', data);
 	})
 
 	socket.on('motionData',function(data){
 		// console.log(data);
-		io.sockets.in(room).emit('motionDataOut', data);
+		io.sockets.in(roomio).emit('motionDataOut', data);
 		// io.sockets.emit('motionDataOut', data);
 	})
 });
