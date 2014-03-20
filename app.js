@@ -38,12 +38,16 @@ io.set('log level', 1);
 // attach Socket.io to our HTTP server
 // io = socketio.listen(server);
 //
-var room = "abc123";
+var room;
 
 // handle incoming connections from clients
 io.sockets.on('connection', function(socket) {
     // once a client has connected, we expect to get a ping from them saying what room they want to join
+     socket.on('newRoom', function(data) {
+        room = data.room
+    });
     socket.on('room', function(room) {
+    	room = room;
         socket.join(room);
     });
 

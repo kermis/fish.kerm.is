@@ -173,6 +173,9 @@ var cross, rod, duck;
 //leap vars
 var leapObj = {};
 
+//socket Phone vars
+var phoneObj = {};
+
 init();
 animate();
 
@@ -244,7 +247,7 @@ function init() {
     rod.position.z = 170;
     rod.rotation.y = 0.5;
     rod.rotation.x = 0.8;
-    // scene.add(rod);
+    scene.add(rod);
 
     // renderer
 
@@ -363,9 +366,12 @@ controller.connect();
 function updateRod() {
     // console.log('x')
     try {
-        rod.rotation.y = leapObj.rotY;
-        rod.rotation.z = leapObj.rotZ;
-        rod.rotation.x = leapObj.rotX;
+        // rod.rotation.y = leapObj.rotY;
+        // rod.rotation.z = leapObj.rotZ;
+        // rod.rotation.x = leapObj.rotX;
+        rod.rotation.y = phoneObj.rotY;
+        rod.rotation.z = phoneObj.rotZ;
+        rod.rotation.x = phoneObj.rotX;
 
         // rod.position.x = -200 + hand.posX;
         // rod.position.y = 100 + hand.posY;
@@ -375,15 +381,6 @@ function updateRod() {
         console.log(r);
     }
 }
-
-// var room = 123;
-
-// var motionReceiveName = 'motionData' + room;
-// console.log(motionReceiveName);
-
-// var socket = io.connect('http://localhost:8080');
-
-
 
 
 //frame data from pointables[0]
@@ -443,15 +440,20 @@ function updateRod() {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////      Socket Stuff      /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// var socket = io.connect('http://localhost:8080');
+// var socket = io.connect('http://localhost:3000');
 var socket = io.connect('http://pdntspaa.herokuapp.com');
 
    // let's assume that the client page, once rendered, knows what room it wants to join
-var room = "abc123";
+var room = generateRoomId();
+
+$(function(){
+    $('.roomGenerated').html(room);
+})
 
 socket.on('connect', function() {
    // Connected, let's sign-up for to receive messages for this room
    socket.emit('room', room);
+   socket.emit('message', {msg: 'client joined room with ID '+ room});
    console.log('joined room');
 });
 
@@ -461,5 +463,32 @@ socket.on('message', function(data) {
 
 socket.on('motionDataOut', function(data) {
    // console.log('Incoming motionData:', data);
+   // Tilt Left/Right [gamma]
+   // Tilt Front/Back [beta]
+   // Direction [alpha]
+
    $('.debug').html('gamma: ' + data.gamma + ' <br>beta:' + data.beta + ' <br> alpha: ' + data.alpha);
+   phoneObj.rotY = deg2rad(data.alpha);
+   phoneObj.rotX = deg2rad(data.beta);
+   phoneObj.rotZ = deg2rad(data.gamma);
+
+   updateRod();
 });
+
+function deg2rad(angle) {
+
+  return angle * .017453292519943295; // (angle / 180) * Math.PI;
+}
+
+function rad2deg(angle) {
+
+  return angle * 57.29577951308232; // angle / Math.PI * 180
+}
+
+function generateRoomId() {
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNPQRSTUVWXYZ123456789";
+    for (var i = 0; i < 3; i++)
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+    return text;
+}
