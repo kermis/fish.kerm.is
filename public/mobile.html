@@ -1,0 +1,78 @@
+<input type="text" id="roomNumber" value="123">
+<button id="roomConnect">Connect</button>
+
+<button id="sendMotion">Send Motion</button>
+<div class="x"></div>
+<br>
+<br>
+<div class="x2">TEST</div>
+<div class="x3"></div>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="/js/socket.io.min.js"></script>
+<script>
+// var socket = io.connect('http://192.168.1.13:8080');
+var socket = io.connect('http://pdntspaa.herokuapp.com');
+
+var roomNumber;
+
+var motionD;
+
+$(function() {
+    $("#roomConnect").click(function() {
+
+    })
+
+    var room = "abc123";
+
+    socket.on('connect', function() {
+        // Connected, let's sign-up for to receive messages for this room
+        socket.emit('room', room);
+        socket.emit('message', {
+            msg: 'mobile joined room'
+        });
+
+        $('.x2').html("Connected to Socket with room " + room);
+    });
+
+    socket.on('message', function(data) {
+        console.log('Incoming message:', data);
+    });
+
+    socket.on('motionDataOut', function(data) {
+        console.log('Incoming message:', data);
+        $('.x2').html(data.motion)
+    });
+
+    // socket.emit('message', {msg: 'emit-test'})
+
+    if (window.DeviceOrientationEvent) {
+        $('.x').html("DeviceOrientation is supported");
+        window.addEventListener('deviceorientation', handleMotion, false);
+    } else {
+        $('.x').html("DeviceOrientation is not supported in this browser");
+    }
+
+    function handleMotion(event) {
+        $('.x').html('gamma: ' + event.gamma + ' <br>beta:' + event.beta + ' <br> alpha:' + event.alpha);
+
+        motionD = {
+            gamma: event.gamma,
+            beta: event.beta,
+            alpha: event.alpha
+        }
+        // socket.emit('message', {
+        //     msg: event,
+        // })
+
+    }
+
+})
+
+setInterval(function() {
+    socket.emit('motionData', motionD)
+    $('.x3').html('sending motion data...', motionD)
+}, 20)
+
+//devicemotion
+//
+</script>
