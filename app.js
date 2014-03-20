@@ -23,8 +23,10 @@ app.get('/', function(req, res) {
     res.send('app is running <br><br><br>&copy;Kerm.is 2014')
 })
 
+var port = process.env.PORT || 3000;
+
 // Create a Node.js based http server on port 8080
-var server = require('http').createServer(app).listen(80);
+var server = require('http').createServer(app).listen(port);
 
 // Create a Socket.IO server and attach it to the http server
 var io = require('socket.io').listen(server);
