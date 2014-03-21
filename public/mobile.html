@@ -11,7 +11,15 @@
 <script src="/js/socket.io.min.js"></script>
 <script>
 // var socket = io.connect('http://192.168.1.13:3000');
-var socket = io.connect('http://pdntspaa.herokuapp.com');
+var currentURL = window.location.href;
+var loc = window.location;
+if(loc.port != undefined){
+    var currentURL = loc.protocol + '//' + loc.hostname + ':' + loc.port;
+}else{
+    var currentURL = loc.protocol + '//' + loc.hostname;
+}
+console.log(currentURL);
+var socket = io.connect(currentURL);
 
 var room = queryParam('roomNumber');
 
