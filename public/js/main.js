@@ -447,7 +447,7 @@ function updateRod() {
 
 var currentURL = window.location.href;
 var loc = window.location;
-if(loc.port != undefined){
+if(loc.port != undefined && loc.port > 1){
     var currentURL = loc.protocol + '//' + loc.hostname + ':' + loc.port;
 }else{
     var currentURL = loc.protocol + '//' + loc.hostname;
