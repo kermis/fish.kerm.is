@@ -463,6 +463,7 @@ var room = generateRoomId();
 $(function(){
     $('.urlFounded').html(currentURL);
     $('.roomGenerated').html(room);
+    $('.instruct').fadeIn('fast')
 })
 
 socket.on('connect', function() {
