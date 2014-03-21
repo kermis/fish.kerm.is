@@ -452,6 +452,9 @@ if(loc.port != undefined){
 }else{
     var currentURL = loc.protocol + '//' + loc.hostname;
 }
+console.log(window.location);
+console.log(currentURL)
+
 var socket = io.connect(currentURL);
 
    // let's assume that the client page, once rendered, knows what room it wants to join
