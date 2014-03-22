@@ -1,107 +1,140 @@
-<!-- <input type="text" id="roomNumber" value="123">
-<button id="roomConnect">Connect</button>
+<!doctype html>
+<html lang="en">
 
-<button id="sendMotion">Send Motion</button> -->
-<div class="x"></div>
-<br>
-<br>
-<div class="x2">Not Connected</div>
-<div class="x3"></div>
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-<script src="/js/socket.io.min.js"></script>
-<script>
-// var socket = io.connect('http://192.168.1.13:3000');
-var currentURL = window.location.href;
-var loc = window.location;
-if(loc.port != undefined){
-    var currentURL = loc.protocol + '//' + loc.hostname + ':' + loc.port;
-}else{
-    var currentURL = loc.protocol + '//' + loc.hostname;
-}
-console.log(currentURL);
-var socket = io.connect(currentURL);
+<head>
+    <meta charset="UTF-8">
+    <title>Kerm.is Controller</title>
 
-var room = queryParam('roomNumber');
+    <meta name="viewport" content="initial-scale=1, user-scalable=no">
 
-var motionD;
+    <style type="text/css">
+    body, html {
+        margin:0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+    input[type=text] {
+        width: 100%;
+        margin-top: 15%;
+        font-size: 3em;
+        text-align: center;
+        padding: 20px;
+        padding-left: 0;
+        padding-right: 0;
+        background: rgba(255, 255, 255, 0.5);
+        border: none;
+    }
+    #wrap {
+        width: 90%;
+        margin-left: 5%;
+        padding: 20px;
+    }
+    </style>
+</head>
 
-$(function() {
-    // $("#roomConnect").click(function() {
+<body>
+    <div id="wrap">
+        <div class="x"></div>
+        <br>
+        <div class="x2">Not Connected</div>
+        <br>
+        <div class="x3"></div>
+    </div>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="/js/socket.io.min.js"></script>
+    <script>
+    // var socket = io.connect('http://192.168.1.13:3000');
+    var currentURL = window.location.href;
+    var loc = window.location;
+    if (loc.port != undefined) {
+        var currentURL = loc.protocol + '//' + loc.hostname + ':' + loc.port;
+    } else {
+        var currentURL = loc.protocol + '//' + loc.hostname;
+    }
+    console.log(currentURL);
+    var socket = io.connect(currentURL);
 
-    //     room = $('#roomNumber').val();
-    //     alert(room);
+    var room = queryParam('roomNumber');
 
-    //     socket.on('connect', function() {
-    //         // Connected, let's sign-up for to receive messages for this room
-    //         // socket.emit('newRoom', {room: roomNr})
-    //         socket.emit('room', room);
-    //         socket.emit('message', {
-    //             msg: 'mobile joined room'
-    //         });
+    var motionD;
 
-    //         $('.x2').html("Connected to Socket with room " + room);
-    //     });
-    // })
+    $(function() {
+        $('body').css('background', getRandomColor());
 
 
-    socket.on('connect', function() {
-        // Connected, let's sign-up for to receive messages for this room
-        socket.emit('room', room);
-        socket.emit('message', {
-            msg: 'mobile joined room with ID '+room
+        socket.on('connect', function() {
+            // Connected, let's sign-up for to receive messages for this room
+            socket.emit('room', room);
+            socket.emit('message', {
+                msg: 'mobile joined room with ID ' + room
+            });
+
+            $('.x2').html("Connected to " + room);
         });
 
-        $('.x2').html("Connected to Socket with room " + room);
-    });
+        socket.on('message', function(data) {
+            console.log('Incoming message:', data.msg);
+        });
 
-    socket.on('message', function(data) {
-        console.log('Incoming message:', data.msg);
-    });
+        socket.on('motionDataOut', function(data) {
+            console.log('Incoming message:', data);
+            $('.x2').html(data.motion)
+        });
 
-    socket.on('motionDataOut', function(data) {
-        console.log('Incoming message:', data);
-        $('.x2').html(data.motion)
-    });
+        // socket.emit('message', {msg: 'emit-test'})
 
-    // socket.emit('message', {msg: 'emit-test'})
-
-    if (window.DeviceOrientationEvent) {
-        $('.x').html("DeviceOrientation is supported");
-        window.addEventListener('deviceorientation', handleMotion, false);
-    } else {
-        $('.x').html("DeviceOrientation is not supported in this browser");
-    }
-
-    function handleMotion(event) {
-        $('.x').html('gamma: ' + event.gamma + ' <br>beta:' + event.beta + ' <br> alpha:' + event.alpha);
-
-        motionD = {
-            gamma: event.gamma,
-            beta: event.beta,
-            alpha: event.alpha
+        if (window.DeviceOrientationEvent) {
+            $('.x').html("DeviceOrientation is supported");
+            window.addEventListener('deviceorientation', handleMotion, false);
+        } else {
+            $('.x').html("Motion Control is not supported in this browser");
         }
-        // socket.emit('message', {
-        //     msg: event,
-        // })
 
+        function handleMotion(event) {
+            $('.x').html('gamma: ' + event.gamma + ' <br>beta:' + event.beta + ' <br> alpha:' + event.alpha);
+
+            motionD = {
+                gamma: event.gamma,
+                beta: event.beta,
+                alpha: event.alpha
+            }
+            // socket.emit('message', {
+            //     msg: event,
+            // })
+
+        }
+
+    })
+
+    setInterval(function() {
+        socket.emit('motionData', motionD)
+        // socket.emit('message', motionD)
+        $('.x3').html('motion data: ', motionD)
+    }, 200)
+
+    /////// to get room from URL //////////
+
+    function queryParam(name) {
+        name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+        var regexS = "[\\?&]" + name + "=([^&#]*)";
+        var regex = new RegExp(regexS);
+        var results = regex.exec(window.location.href);
+        if (results == null) return "";
+        else return results[1];
     }
 
-})
+    function getRandomColor() {
+        var letters = '0123456789ABCDEF'.split('');
+        var color = '#';
+        for (var i = 0; i < 6; i++) {
+            color += letters[Math.round(Math.random() * 15)];
+        }
+        return color;
+    }
+    </script>
 
-setInterval(function() {
-    socket.emit('motionData', motionD)
-    // socket.emit('message', motionD)
-    $('.x3').html('motion data: ', motionD)
-}, 200)
+</body>
 
-/////// to get room from URL //////////
-
-function queryParam(name) {
-    name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
-    var regexS = "[\\?&]" + name + "=([^&#]*)";
-    var regex = new RegExp(regexS);
-    var results = regex.exec(window.location.href);
-    if (results == null) return "";
-    else return results[1];
-}
-</script>
+</html>
