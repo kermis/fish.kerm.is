@@ -31,10 +31,16 @@
         margin-left: 5%;
         padding: 20px;
     }
-    .x2{
+    .x2, .x{
         color: white;
         text-shadow: 0px 0px 2px #000;
         font-size: 3rem;
+    }
+    .x{
+        /*border: dotted red 2px;
+        background: red;
+        padding: 20px;
+        font-size: 5rem;*/
     }
     .a{
         display: none;
@@ -44,18 +50,21 @@
 
 <body>
     <div id="wrap">
-        <div class="x a"></div>
         <br>
         <div class="x2">Not Connected</div>
+        <br>
+        <br>
+        <div class="x"></div>
         <br>
         <div class="x3 a"></div>
     </div>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-    <script src="/js/socket.io.min.js"></script>
+    <script src="/js/libs/socket.io.min.js"></script>
     <script>
     // var socket = io.connect('http://192.168.1.13:3000');
     var currentURL = window.location.href;
     var loc = window.location;
+    console.log(loc);
     if (loc.port != undefined) {
         var currentURL = loc.protocol + '//' + loc.hostname + ':' + loc.port;
     } else {
@@ -65,6 +74,10 @@
     var socket = io.connect(currentURL);
 
     var room = queryParam('roomNumber');
+    if (room == ''){
+        room = location.hash.replace('#','');
+    }
+    //var room = location.hash.replace('#','');
 
     var motionD;
 
@@ -87,21 +100,21 @@
         });
 
         socket.on('motionDataOut', function(data) {
-            console.log('Incoming message:', data);
-            $('.x2').html(data.motion)
+            //console.log('Incoming message:', data);
+            /*$('.x2').html(data.motion)*/
         });
 
         // socket.emit('message', {msg: 'emit-test'})
 
         if (window.DeviceOrientationEvent) {
-            $('.x').html("DeviceOrientation is supported");
+            // $('.x').html("DeviceOrientation is supported");
             window.addEventListener('deviceorientation', handleMotion, false);
         } else {
             $('.x').html("Motion Control is not supported in this browser");
         }
 
         function handleMotion(event) {
-            $('.x').html('gamma: ' + event.gamma + ' <br>beta:' + event.beta + ' <br> alpha:' + event.alpha);
+            /*$('.x').html('<h5>Motion:</h5><br>gamma: ' + event.gamma + ' <br>beta:' + event.beta + ' <br> alpha:' + event.alpha);*/
 
             motionD = {
                 gamma: event.gamma,
@@ -120,7 +133,7 @@
         socket.emit('motionData', motionD)
         // socket.emit('message', motionD)
         $('.x3').html('motion data: ', motionD)
-    }, 200)
+    }, 40)
 
     /////// to get room from URL //////////
 
