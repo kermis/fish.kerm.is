@@ -2,7 +2,6 @@
 /////   Socket Stuff
 ////////////////////////////////////
 var room = generateRoomId();
-
 var socketController = {
     currentURL: window.location.href,
     loc: window.location,
@@ -24,7 +23,6 @@ var socketController = {
         };
     },
     connect: function() {
-        console.log(this.currentURL);
         socketController.socket.on('connect', this.socketConnected);
         socketController.socket.on('message', this.socketMessage);
         socketController.socket.on('motionDataOut', this.socketMotionDataOut);
@@ -33,7 +31,6 @@ var socketController = {
     },
     socketConnected: function() {
         // Connected, let's sign-up for to receive messages for this room
-        console.log('XXXXX',room);
         socketController.socket.emit('room', room);
         socketController.socket.emit('message', {
             msg: 'client joined room with ID ' + room
@@ -67,7 +64,6 @@ var socketController = {
         var genURL = this.currentURL+'/mobile/#' + room;
         // Render the QR code on a newly created img element
         var img = qr.image(genURL);
-        console.log(genURL);
         $('.instruct').html(img); // Re-render the QR code on an existing element
         $('.instruct').parent().css('text-align','center')
         $('.instruct').attr('style','background-color:white; padding: 15px 0 0 15px; position: absolute; left:200px;')

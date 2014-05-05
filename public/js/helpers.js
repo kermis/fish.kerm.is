@@ -15,3 +15,7 @@ function generateRoomId() {
         text += possible.charAt(Math.floor(Math.random() * possible.length));
     return text;
 }
+
+function getRandomArbitary (min, max) {
+    return Math.random() * (max - min) + min;
+}
