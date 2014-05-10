@@ -8,57 +8,108 @@
     <meta name="viewport" content="initial-scale=1, user-scalable=no">
 
     <style type="text/css">
+
     body, html {
         margin:0;
         padding: 0;
         width: 100%;
         height: 100%;
         font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;
-    }
-    input[type=text] {
-        width: 100%;
-        margin-top: 15%;
-        font-size: 3em;
-        text-align: center;
-        padding: 20px;
-        padding-left: 0;
-        padding-right: 0;
-        background: rgba(255, 255, 255, 0.5);
-        border: none;
+        overflow: hidden;
     }
     #wrap {
         width: 90%;
         margin-left: 5%;
         padding: 20px;
     }
-    .x2, .x{
+    .x2, .x {
         color: white;
-        text-shadow: 0px 0px 2px #000;
-        font-size: 3rem;
+        text-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
+        font-size: 1rem;
+        line-height: 0;
     }
-    .x{
-        /*border: dotted red 2px;
-        background: red;
-        padding: 20px;
-        font-size: 5rem;*/
-    }
-    .a{
+    .a {
         display: none;
+    }
+    input[type='range'] {
+        -webkit-appearance: none;
+        width: 90%;
+        height: 46px;
+        padding: 3px;
+        -webkit-border-radius: 15px;
+        border-radius: 15px;
+        border: none;
+        background: rgba(0, 0, 0, 0.5);
+    }
+    input[type='range']::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 60px;
+        height: 60px;
+        background: white;
+        border-radius: 100%;
+        -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        -moz-box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    }
+    .round {
+        border-radius: 100%;
+        width: 100px;
+        height: 100px;
+        border: none;
+        font-size: 1.5rem;
+        background: rgba(255,255,255,0.6);
+        font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;
+        font-weight: 800;
+        color: rgba(0,0,0,0.7);
+
+        -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        -moz-box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    }
+    .round:hover{
+
+    }
+    .round:active{
+        -webkit-box-shadow:inset 0 0 5px rgba(0, 0, 0, 0.5);
+        -moz-box-shadow:inset 0 0 5px rgba(0, 0, 0, 0.5);
+        box-shadow:inset 0 0 5px rgba(0, 0, 0, 0.5);
+    }
+    #pull {
+        float: right;
+        margin-right: 10%;
     }
     </style>
 </head>
 
 <body>
     <div id="wrap">
-        <br>
         <div class="x2">Not Connected</div>
-        <br>
         <br>
         <div class="x"></div>
         <br>
         <div class="x3 a"></div>
+
+        <label for="rotation">Rotation</label>
+        <br>
+        <input type="range" min="0" value="180" max="360" id="rotation" name="rotation">
+
+        <br>
+        <br>
+
+        <label for="angle">Angle</label>
+        <br>
+        <input type="range" min="0" value="50" max="100" id="angle" name="angle">
+
+        <br>
+        <br>
+        <br>
+
+        <button class="round" id="drop">Drop</button>
+        <button class="round" id="pull">Pull up</button>
+
     </div>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="/libs/tappy.js"></script>
     <script src="/js/libs/socket.io.min.js"></script>
     <script>
     // var socket = io.connect('http://192.168.1.13:3000');
@@ -74,8 +125,8 @@
     var socket = io.connect(currentURL);
 
     var room = queryParam('roomNumber');
-    if (room == ''){
-        room = location.hash.replace('#','');
+    if (room == '') {
+        room = location.hash.replace('#', '');
     }
     //var room = location.hash.replace('#','');
 
@@ -83,6 +134,12 @@
 
     $(function() {
         $('body').css('background', getRandomColor());
+
+        $('.round').css('width', $(window).width() / 3).css('height', $(window).width() / 3);
+
+        $('.round').bind( "tap", function( e ){
+          // alert( "tap!" );
+        });
 
 
         socket.on('connect', function() {

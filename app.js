@@ -43,6 +43,7 @@ var roomio;
 
 // handle incoming connections from clients
 io.sockets.on('connection', function(socket) {
+
     // once a client has connected, we expect to get a ping from them saying what room they want to join
      socket.on('newRoom', function(data) {
         room = data.room

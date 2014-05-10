@@ -31,15 +31,6 @@ var strings = [];
 //cannon js variables
 var world, solver;
 
-var stringLord;
-
-var pondCenterX = -160;
-var pondCenterY = 23;
-var pondCenterZ = 550;
-
-var duckTargets = [];
-
-var nonPhysiStrings = [];
 
 init();
 animate();
@@ -68,6 +59,11 @@ function init() {
     });
     scene.setGravity(new THREE.Vector3(0, -800, 0));
 
+
+    var pondCenterX = -160;
+    var pondCenterY = 23;
+    var pondCenterZ = 550;
+
     //Three pivot points, for three circles of ducks, at three different speeds, and radii
     duckPivot1 = new THREE.Object3D();
     duckPivot2 = new THREE.Object3D();
@@ -82,63 +78,30 @@ function init() {
     scene.add(duckPivot3);
 
 
-    var numberOfStrings = 22;
+    var numberOfStrings = 14;
 
     var str = new THREE.Object3D();
     // str.position = new THREE.Vector3(pondCenterX - 90, 40, pondCenterZ);
     scene.add(str);
 
 
-    var emptyObj = new Physijs.BoxMesh(new THREE.CubeGeometry(0, 0, 0), new THREE.MeshBasicMaterial());
-
-    var stringGeometry = new THREE.BoxGeometry(0.5, 8, 0.5, 1, 1, 1)
-    var stringGeometryXL = new THREE.BoxGeometry(0.5, 11, 0.5, 1, 1, 1)
-    var stringMaterial = Physijs.createMaterial(
-        new THREE.MeshBasicMaterial({
-            color: 0x000000
-        }),
-        0.0, //friction
-        0.00 //bounce
-    );
-    var stringMaterialTransparent = Physijs.createMaterial(
-        new THREE.MeshNormalMaterial({
-            transparent: true, opacity: 00
-        }),
-        0.0, //friction
-        0.00 //bounce
-    );
-
-
+    var emptyObj = new Physijs.BoxMesh(new THREE.CubeGeometry( 0, 0, 0), new THREE.MeshBasicMaterial());
 
 
     for (var i = 0; i < numberOfStrings; i++) {
+        var geometry = new THREE.BoxGeometry(0.5, 9, 0.5, 1, 1, 1)
+        var material = Physijs.createMaterial(
+            new THREE.MeshBasicMaterial(),
+            0.1, //friction
+            0.00 //bounce
+        );
+        strings[i] = new Physijs.BoxMesh(geometry, material);
 
-        strings[i] = new Physijs.BoxMesh(stringGeometry, stringMaterialTransparent, 1000);
-        nonPhysiStrings[i] = new THREE.Mesh(stringGeometryXL, stringMaterial);
-
-        strings[i].position.set(pondCenterX - 130, 200 - (i * 10), pondCenterZ)
-        nonPhysiStrings[i].position.set(pondCenterX - 130, 200 - (i * 10), pondCenterZ)
-
-        strings[i].__dirtyPosition = true;
-        // strings[i].position.x = pondCenterX - 95;
-        // strings[i].position.z = pondCenterZ;
-        // strings[i].position.y = 169 - (i * 10);
+        strings[i].position.x = pondCenterX - 95;
+        strings[i].position.z = pondCenterZ;
+        strings[i].position.y = 169 - (i * 10);
         scene.add(strings[i]);
-        scene.add(nonPhysiStrings[i])
     }
-
-    var fishingBlocksScale = 5;
-
-    nonPhysiStrings[6].scale.set(fishingBlocksScale, 1, fishingBlocksScale)
-    nonPhysiStrings[17].scale.set(fishingBlocksScale, 1, fishingBlocksScale)
-    nonPhysiStrings[20].scale.set(fishingBlocksScale, 1, fishingBlocksScale)
-
-    stringLord = new Physijs.BoxMesh(stringGeometry, stringMaterial, 0);
-    stringLord.position.set(pondCenterX - 130, 210, pondCenterZ);
-    stringLord.__dirtyPosition = true;
-
-    scene.add(stringLord);
-
 
     // scene.add(str);
     var x = new THREE.Vector3(pondCenterX - 95, pondCenterY + 169, pondCenterZ);
@@ -146,8 +109,8 @@ function init() {
     //First contraint
     var constraint = new Physijs.HingeConstraint(
         strings[0], // First object to be constrained
-        stringLord, // OPTIONAL second object - if omitted then physijs_mesh_1 will be constrained to the scene
-        new THREE.Vector3(stringLord.position.x, stringLord.position.y, stringLord.position.z), // point in the scene to apply the constraint
+        rodPivot, // OPTIONAL second object - if omitted then physijs_mesh_1 will be constrained to the scene
+        x, // point in the scene to apply the constraint
         new THREE.Vector3(1, 0, 0) // Axis along which the hinge lies - in this case it is the X axis
     );
     scene.addConstraint(constraint);
@@ -158,10 +121,8 @@ function init() {
         // strings[i]
         constraints[i] = new Physijs.HingeConstraint(strings[i], strings[i - 1], strings[i - 1].position, new THREE.Vector3(0, 0, 1));
         scene.addConstraint(constraints[i]);
-        constraints[i].setLimits(0.001, 0.001, 0.0, 0.0);
-        // constraints[i].enableAngularMotor(10, 1);
-        // constraints[i].disableMotor();
-
+        constraints[i].setLimits(0.001, 0.01, 0.0, 0.0);
+        constraints[i].enableAngularMotor(0, 0);
     };
 
 
@@ -203,18 +164,16 @@ function init() {
 
             //clone the mesh, so we can have moe then one duck
             var meshX = mesh.clone();
-
             ducks[i] = meshX;
 
-            // duckTargets
-            var box = new THREE.Mesh(
-                new THREE.CubeGeometry( 150, 120, 70, 1, 1, 1 ),
-                new THREE.MeshNormalMaterial({transparent: true, opacity: 0}));
-
-            duckTargets[i] = box;
-            ducks[i].add(box);
-
-
+            // give random color;
+            // for (var i = 0; i < meshX.children[4].children.length; i++) {
+            //     var mat = meshX.children[4].children[i].material;
+            //     mat.color.r = Math.random();
+            //     mat.color.g = Math.random();
+            //     mat.color.b = Math.random();
+            //     //console.log(mat.color)
+            // };
 
 
             ducks[i].position.set(100, 0, 0);
@@ -230,8 +189,6 @@ function init() {
             }
 
         };
-
-
         rScale = 2
         ducks[0].position.set(100 * rScale, 0, 0 * rScale);
         ducks[0].rotation.set(0, deg2rad(270), 0);
@@ -302,7 +259,7 @@ function init() {
     var fishingRod;
     rodPivot.position.set(0, 140, -70)
 
-    makeCrossAndSetPosition(fisherObject, rodPivot.position.x, rodPivot.position.y, rodPivot.position.z)
+    makeCrossAndSetPosition(fisherObject, rodPivot.position.x,rodPivot.position.y,rodPivot.position.z)
 
     var fishermen = new THREE.ObjectLoader();
     var fisherMenScale = 0.45;
@@ -310,17 +267,9 @@ function init() {
 
         //the fishing rod
         fishingRod = fisherMesh.children[0].children[0];
-        fishingRod.position.set(0, 125, -95);
-        fishingRod.scale.set(1,1.4,1)
+        fishingRod.position.set(0, 80, -55);
         rodPivot.rotation.y = deg2rad(0);
         rodPivot.add(fishingRod);
-
-        // var box = new THREE.Mesh(new THREE.CubeGeometry( 20, 355, 20, 1, 1, 1 ), stringMaterial);
-        // rodPivot.add(box);
-        // box.position.set(0,135,-115)
-        // box.rotation.set(deg2rad(-36),0,0)
-        //
-        // // ==> Our c-side is 355 long -> see pythagoras' Theorem
 
         // rodPivot.rotation.x = deg2rad(90);
 
@@ -338,7 +287,7 @@ function init() {
 
         //scale the seat of the fisherMen
         // console.log(fisherObject);
-        // fisherObject.children[1].children[0].children[9].scale.set(0.75, 1, 0.75);
+        fisherObject.children[1].children[0].children[9].scale.set(0.75, 1, 0.75);
 
     });
 
@@ -347,7 +296,6 @@ function init() {
     //
     // lights
     var light = new THREE.HemisphereLight(0xFFE7B3, 1.2)
-    // var light = new THREE.HemisphereLight(0xFFFFFF, 1.2)
     scene.add(light)
 
     //sky
@@ -380,14 +328,6 @@ function init() {
 
     window.addEventListener('resize', onWindowResize, false);
 
-    //move up once, so the line is correct
-    // moveRodStrings('up');
-    var box = new THREE.Mesh(new THREE.CubeGeometry( 10, 160, 10, 1, 1, 1 ), new THREE.MeshBasicMaterial( {color: 0xEE5500} ));
-    box.position.set(pondCenterX-80, pondCenterY+130, pondCenterZ);
-    box.rotation.set(0,0,deg2rad(36))
-    // scene.add(box);
-    //
-    updateNonPhysiStringsWithThePositionsOfThePhysiStrings();
 }
 
 function onWindowResize() {
@@ -423,7 +363,7 @@ function render() {
 
         duckPivot1.rotation.y += 0.002;
         duckPivot2.rotation.y -= 0.005;
-        duckPivot3.rotation.y += 0.004;
+        duckPivot3.rotation.y += 0.01;
         sky.rotation.y -= 0.002;
 
     } catch (e) {}
@@ -436,10 +376,13 @@ function updateRod() {
     // console.log('x')
     try {
         if (leapController.leapConnected) {
-            //Get handrotation and adjust accordingly
-            //
+            rod.rotation.y = leapController.leapObj.rotY;
+            rod.rotation.z = leapController.leapObj.rotZ;
+            rod.rotation.x = leapController.leapObj.rotX;
         } else {
-            //
+            rod.rotation.y = socketController.phoneObj.rotY;
+            rod.rotation.z = socketController.phoneObj.rotZ;
+            rod.rotation.x = socketController.phoneObj.rotX;
         }
         // rod.position.x = -200 + hand.posX;
         // rod.position.y = 100 + hand.posY;
@@ -452,99 +395,47 @@ function updateRod() {
 
 document.onkeydown = handleKeyDown;
 
-var movementLeft = 0;
-var movementRight = 0;
-var movementUp = 0;
-var movementDown = 0;
-var toOutside = 0;
-
-function moveRodStrings(direction){
-    switch (direction) {
-        case 'up':
-            rodPivot.rotation.x += deg2rad(1);
-            break;
-        case 'down':
-            rodPivot.rotation.x -= deg2rad(1);
-            break;
-        case 'left':
-            break;
-        case 'right':
-            break;
-    }
-
-
-    var rotation = reduceTo360(rad2deg(rodPivot.rotation.x)+54);
-    // console.log(Math.round(rotation));
-
-    var zSet = 0;
-    var xSet = 0;
-
-    var rodLengthFromPivot = 160;
-
-    var xPos = (Math.cos(deg2rad(rotation))*rodLengthFromPivot);
-    var yPos = (Math.sin(deg2rad(rotation))*rodLengthFromPivot);
-
-    stringLord.position.set(
-        -(192 + xPos),
-        86 + yPos,
-        fisherObject.position.z
-    );
-    stringLord.__dirtyPosition = true;
-}
-
 function handleKeyDown(e) {
     //up -> 38
     //down -> 40
     //left -> 37
     //right -> 39
-    //space -> 32
 
     switch (e.keyCode) {
         case 38:
-            moveRodStrings('up');
+            rodPivot.rotation.x += deg2rad(30);
             break;
         case 40:
-            moveRodStrings('down');
-
+            rodPivot.rotation.x -= deg2rad(30);
             break;
         case 37:
-            moveRodStrings('left');
-
+            fisherObject.rotation.y -= deg2rad(30);
+            //the seat
+            fisherObject.children[1].children[0].children[9].rotation.y += deg2rad(30);
             break;
         case 39:
-            moveRodStrings('right');
-
-            break;
-        case 32:
-            checkCollision();
+            fisherObject.rotation.y += deg2rad(30);
+            //the seat
+            fisherObject.children[1].children[0].children[9].rotation.y -= deg2rad(30);
             break;
     }
-
-
+    // var pos = rodPivot.position;
+    strings[0].position.x = rodPivot.position.x;
+    strings[0].position.y = rodPivot.position.y;
+    strings[0].position.z = rodPivot.position.z;
+    strings[0].__dirtyPosition = true;
 }
-
-function reduceTo360(angle) {
-    var newAngle = angle;
-    while (newAngle <= 0) {
-        newAngle += 360
-    };
-    while (newAngle >= 360) {
-        newAngle -= 360
-    };
-    return newAngle;
-}
-
 
 setTimeout(function() {
     render();
 }, 1000);
 
 
-function makeCrossAndSetPosition(objectToAddTo, x, y, z) {
+function makeCrossAndSetPosition(objectToAddTo, x,y,z){
     var geometry = new THREE.CubeGeometry(1, 100, 1)
     var material = new THREE.MeshBasicMaterial()
     var stick = new THREE.Mesh(geometry, material)
-    stick.position = new THREE.Vector3(x, y, z);
+    stick.position = new THREE.Vector3( x, y, z );
 
     stick2 = stick.clone();
     stick2.rotation.x = deg2rad(90);
@@ -552,95 +443,6 @@ function makeCrossAndSetPosition(objectToAddTo, x, y, z) {
     stick3 = stick.clone();
     stick3.rotation.z = deg2rad(90);
 
-    objectToAddTo.add(stick);
-    objectToAddTo.add(stick2);
-    objectToAddTo.add(stick3);
+    objectToAddTo.add(stick);objectToAddTo.add(stick2);objectToAddTo.add(stick3);
 
-}
-
-function checkCollision(){
-
-        var stringsYouCanCatchWith = [strings[6],strings[17],strings[20] ]
-
-        console.log('stringX ->', strings[17].position.x)
-
-
-    duckPivot1.updateMatrixWorld();
-    duckPivot2.updateMatrixWorld();
-    duckPivot3.updateMatrixWorld();
-
-    var marge = 15;
-
-    for (var i = 0; i < ducks.length; i++) {
-            // duckTargets[i].scale.y += 100;
-            ducks[i].updateMatrixWorld();
-            var vector = new THREE.Vector3();
-            vector.setFromMatrixPosition( duckTargets[i].matrixWorld );
-
-            var strX =  strings[6].position.x;
-            var strY =  strings[6].position.y;
-            var strZ =  strings[6].position.z;
-
-            var strX2 =  strings[17].position.x;
-            var strY2 =  strings[17].position.y;
-            var strZ2 =  strings[17].position.z;
-
-            var strX3 =  strings[20].position.x;
-            var strY3 =  strings[20].position.y;
-            var strZ3 =  strings[20].position.z;
-
-
-                //check for collisions on first fat string
-                if(vector.x < strX + marge && vector.x > strX - marge){
-                    if(vector.z < strZ + marge && vector.z > strZ - marge){
-                        if(vector.y < strY + marge && vector.y > strY - marge){
-                            console.log('x+z+y-hit');
-                            removeDuck(ducks[i]);
-                            // scene.remove(ducks[i]);
-                        }
-                    }
-                }
-
-                //check for collisions on second fat string
-                if(vector.x < strX2 + marge && vector.x > strX2 - marge){
-                    if(vector.z < strZ2 + marge && vector.z > strZ2 - marge){
-                        if(vector.y < strY2 + marge && vector.y > strY2 - marge){
-                            console.log('x+z+y-hit');
-                            removeDuck(ducks[i]);
-                            // scene.remove(ducks[i]);
-                        }
-                    }
-                }
-
-                //check for collisions on third fat string
-                if(vector.x < strX3 + marge && vector.x > strX3 - marge){
-                    if(vector.z < strZ3 + marge && vector.z > strZ3 - marge){
-                        if(vector.y < strY3 + marge && vector.y > strY3 - marge){
-                            console.log('x+z+y-hit');
-                            removeDuck(ducks[i]);
-                            // scene.remove(ducks[i]);
-                        }
-                    }
-                }
-
-
-
-        };
-}
-
-function removeDuck(duck){
-    duckPivot1.remove(duck);
-    duckPivot2.remove(duck);
-    duckPivot3.remove(duck);
-}
-
-function updateNonPhysiStringsWithThePositionsOfThePhysiStrings(){
-    for (var i = 0; i < strings.length; i++) {
-        nonPhysiStrings[i].position.set(strings[i].position.x,strings[i].position.y, strings[i].position.z)
-        nonPhysiStrings[i].rotation.set(strings[i].rotation.x,strings[i].rotation.y, strings[i].rotation.z)
-    };
-
-    setTimeout(function(){
-        updateNonPhysiStringsWithThePositionsOfThePhysiStrings();
-    }, 1000/30)
 }
