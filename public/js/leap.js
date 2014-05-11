@@ -27,6 +27,8 @@ var leapController = {
         // your code here
         count++;
 
+
+        if(count > 2){
         try {
             var pointables = frame.hands;
 
@@ -58,6 +60,7 @@ var leapController = {
         }
     }
 
+},
 }
 
 leapController.init();

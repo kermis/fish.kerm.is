@@ -441,24 +441,6 @@ function render() {
 
 }
 
-function updateRod() {
-    // console.log('x')
-    try {
-        if (leapController.leapConnected) {
-            //Get handrotation and adjust accordingly
-            //
-        } else {
-            //
-        }
-        // rod.position.x = -200 + hand.posX;
-        // rod.position.y = 100 + hand.posY;
-        // rod.position.z = 170 + hand.posZ;
-        render();
-    } catch (r) {
-        console.log(r);
-    }
-}
-
 document.onkeydown = handleKeyDown;
 
 var movementLeft = 0;
