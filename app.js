@@ -8,7 +8,7 @@ var path = require('path');
 var app = express();
 
 // Import the Anagrammatix game file.
-var game = require('./game');
+// var game = require('./game');
 
 // Create a simple Express application
 app.configure(function() {
@@ -67,8 +67,14 @@ io.sockets.on('connection', function(socket) {
 	})
 
 	socket.on('motionData',function(data){
-		// console.log(data);
-		io.sockets.in(roomio).emit('motionDataOut', data);
+        // console.log(data);
+        io.sockets.in(roomio).emit('motionDataOut', data);
+        // io.sockets.emit('motionDataOut', data);
+    })
+
+    socket.on('pull',function(data){
+		console.log('pull', data);
+		io.sockets.in(roomio).emit('pulled', data);
 		// io.sockets.emit('motionDataOut', data);
 	})
 });

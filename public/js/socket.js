@@ -25,6 +25,7 @@ var socketController = {
     connect: function() {
         socketController.socket.on('connect', this.socketConnected);
         socketController.socket.on('message', this.socketMessage);
+        socketController.socket.on('pulled', this.pulled);
         socketController.socket.on('motionDataOut', this.socketMotionDataOut);
 
         this.updateInstructions();
@@ -42,19 +43,28 @@ var socketController = {
     socketMessage: function(data) {
         console.log('Incoming message:', data);
     },
+    pulled: function(data){
+        // console.log(data);
+        checkCollision();
+    },
     socketMotionDataOut: function(data) {
         // console.log('Incoming motionData:', data);
         // Tilt Left/Right [gamma]
         // Tilt Front/Back [beta]
         // Direction [alpha]
 
-        $('.debug').html('gamma: ' + data.gamma + ' <br>beta:' + data.beta + ' <br> alpha: ' + data.alpha);
+        $('.debug').html('<br>beta:' + data.beta);
         // phoneObj.rotY = deg2rad(data.alpha);
-        socketController.phoneObj.rotX = -deg2rad(data.beta - 60);
-        socketController.phoneObj.rotZ = deg2rad(data.gamma * 1.5);
-        socketController.phoneObj.rotY = 0;
+        var rotation = deg2rad(data.beta)-45;
 
-        updateRod();
+        rodPivot.rotation.x = rotation;
+
+        moveRodStrings('nothing');
+
+        // socketController.phoneObj.rotZ = deg2rad(data.gamma * 1.5);
+        // socketController.phoneObj.rotY = 0;
+
+        // updateRod();
     },
     updateInstructions: function() {
         $('.urlFounded').html(this.currentURL);
@@ -65,7 +75,7 @@ var socketController = {
         // Render the QR code on a newly created img element
         var img = qr.image(genURL);
         $('.instruct').html(img); // Re-render the QR code on an existing element
-        $('.instruct').parent().css('text-align','center')
+        // $('.instruct').parent().css('text-align','center')
         $('.instruct').attr('style','background-color:white; padding: 15px 0 0 15px; position: absolute; left:200px;')
         qr.image({
             image: img,

@@ -1,5 +1,11 @@
 var debug = false;
 
+var score = 0;
+
+var ducksRemaining = 24;
+
+var timeRemaining = 120;
+
 if (!Detector.webgl) Detector.addGetWebGLMessage();
 
 //three.js vars
@@ -66,7 +72,7 @@ function init() {
     scene = new Physijs.Scene({
         fixedTimeStep: 1 / 120
     });
-    scene.setGravity(new THREE.Vector3(0, -800, 0));
+    scene.setGravity(new THREE.Vector3(0, -1400, 0));
 
     //Three pivot points, for three circles of ducks, at three different speeds, and radii
     duckPivot1 = new THREE.Object3D();
@@ -113,7 +119,7 @@ function init() {
 
     for (var i = 0; i < numberOfStrings; i++) {
 
-        strings[i] = new Physijs.BoxMesh(stringGeometry, stringMaterialTransparent, 1000);
+        strings[i] = new Physijs.BoxMesh(stringGeometry, stringMaterialTransparent, 1);
         nonPhysiStrings[i] = new THREE.Mesh(stringGeometryXL, stringMaterial);
 
         strings[i].position.set(pondCenterX - 130, 200 - (i * 10), pondCenterZ)
@@ -151,20 +157,6 @@ function init() {
         new THREE.Vector3(1, 0, 0) // Axis along which the hinge lies - in this case it is the X axis
     );
     scene.addConstraint(constraint);
-
-    //all the other constraints
-    var constraints = [];
-    for (var i = 1; i < strings.length; i++) {
-        // strings[i]
-        constraints[i] = new Physijs.HingeConstraint(strings[i], strings[i - 1], strings[i - 1].position, new THREE.Vector3(0, 0, 1));
-        scene.addConstraint(constraints[i]);
-        constraints[i].setLimits(0.001, 0.001, 0.0, 0.0);
-        // constraints[i].enableAngularMotor(10, 1);
-        // constraints[i].disableMotor();
-
-    };
-
-
     constraint.setLimits(
         0.001, // minimum angle of motion, in radians
         0.01, // maximum angle of motion, in radians
@@ -173,7 +165,21 @@ function init() {
     );
 
     constraint.enableAngularMotor(0, 0);
-    // constraint.disableMotor();
+
+
+
+    //all the other constraints
+    var constraints = [];
+    for (var i = 1; i < strings.length; i++) {
+        // strings[i]
+        constraints[i] = new Physijs.HingeConstraint(strings[i], strings[i - 1], strings[i - 1].position, new THREE.Vector3(0, 0, 1));
+        scene.addConstraint(constraints[i]);
+        constraints[i].setLimits(0.001, 0.001, 0.1, 0.0);
+        // constraints[i].enableAngularMotor(10, 1);
+        // constraints[i].disableMotor();
+
+    };
+
 
 
     //landscape
@@ -405,12 +411,15 @@ function onWindowResize() {
 
 function animate() {
 
-    render();
+    if(!gameOver){
 
-    requestAnimationFrame(animate);
+        render();
 
-    scene.simulate();
+        requestAnimationFrame(animate);
 
+        scene.simulate();
+
+    }
     // controls.update();
 
 }
@@ -470,12 +479,18 @@ function moveRodStrings(direction){
             break;
         case 'right':
             break;
+        case 'nothing':
+            rodPivot.rotation.x += 0;
+            break;
     }
 
 
     var rotation = reduceTo360(rad2deg(rodPivot.rotation.x)+54);
     // console.log(Math.round(rotation));
+    setRodAndStringPosition(rotation);
+}
 
+function setRodAndStringPosition(rotation){
     var zSet = 0;
     var xSet = 0;
 
@@ -560,6 +575,8 @@ function makeCrossAndSetPosition(objectToAddTo, x, y, z) {
 
 function checkCollision(){
 
+        score -= 5;
+
         var stringsYouCanCatchWith = [strings[6],strings[17],strings[20] ]
 
         console.log('stringX ->', strings[17].position.x)
@@ -626,12 +643,20 @@ function checkCollision(){
 
 
         };
+
+        updateScoreInfo();
 }
 
 function removeDuck(duck){
     duckPivot1.remove(duck);
     duckPivot2.remove(duck);
     duckPivot3.remove(duck);
+
+    score += 15;
+    ducksRemaining --;
+    timeRemaining += 2;
+
+    updateScoreInfo();
 }
 
 function updateNonPhysiStringsWithThePositionsOfThePhysiStrings(){
@@ -643,4 +668,46 @@ function updateNonPhysiStringsWithThePositionsOfThePhysiStrings(){
     setTimeout(function(){
         updateNonPhysiStringsWithThePositionsOfThePhysiStrings();
     }, 1000/30)
+}
+
+
+function updateScoreInfo(){
+
+ $('.info .score').html(score);
+ $('.info .ducks_remaining .ducks').html(ducksRemaining);
+ $('.info .time_remaining .time').html(timeRemaining);
+
+}
+
+var gameStarted;
+var gameOver = false;
+
+startGame();
+
+function startGame(){
+    gameStarted = true;
+    scoreTick();
+};
+
+function endGame(){
+    gameOver = true;
+};
+
+
+
+function scoreTick(){
+
+    if(timeRemaining == 0){
+        endGame();
+    }
+
+    if(gameStarted && timeRemaining > 0){
+
+        timeRemaining -= 1;
+        updateScoreInfo();
+
+        setTimeout(function(){
+            scoreTick();
+        }, 1000)
+    }
 }
