@@ -16,6 +16,22 @@ function generateRoomId() {
     return text;
 }
 
-function getRandomArbitary (min, max) {
+function getRandomArbitary(min, max) {
     return Math.random() * (max - min) + min;
+}
+
+function getRandomColor() {
+    var letters = '0123456789ABCDEF'.split('');
+    var color = '';
+    for (var i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+}
+
+function rgbToHex(r,g,b){
+    var bin = r << 16 | g << 8 | b;
+    return (function(h){
+        return new Array(7-h.length).join("0")+h
+    })(bin.toString(16).toUpperCase())
 }

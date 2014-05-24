@@ -47,9 +47,48 @@ var duckTargets = [];
 
 var nonPhysiStrings = [];
 
-init();
-animate();
+$(function() {
+    var queue = new createjs.LoadQueue();
+    queue.installPlugin(createjs.Sound);
+    queue.on("complete", handleComplete, this);
+    queue.on("progress", handleProgress, this);
+    queue.loadManifest([
+        {
+            id: "ammo",
+            src: "/js/libs/ammo.js"
+        }, {
+            id: "landscape",
+            src: "/models/landscape.js"
+        }, {
+            id: "ducky",
+            src: "/models/duck3.js"
+        }, {
+            id: "vogeltjesdans",
+            src: "/music/vogeltjesdans.mp3"
+        }
+    ]);
 
+
+})
+
+function handleComplete() {
+    $('.overlay').delay(10).fadeOut('slow');
+    init();
+    animate();
+}
+
+function handleProgress(e) {
+    var percentLoaded = Math.round(e.loaded * 100);
+    $('.percentLoaded').html(percentLoaded + ' %');
+    $('.progress').css('width', percentLoaded + '%')
+}
+
+function start(){
+
+    $('.info').fadeOut()
+    $('.info-score').addClass('active')
+    createjs.Sound.play("vogeltjesdans", {loop:-1});
+}
 function init() {
 
     camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 10, 10000);
@@ -108,7 +147,8 @@ function init() {
     );
     var stringMaterialTransparent = Physijs.createMaterial(
         new THREE.MeshNormalMaterial({
-            transparent: true, opacity: 00
+            transparent: true,
+            opacity: 0.8
         }),
         0.0, //friction
         0.00 //bounce
@@ -200,8 +240,7 @@ function init() {
     var ducky = new THREE.ObjectLoader();
     // scale of the radius
     var rScale = 1;
-    ducky.load('/models/duck.js', function(mesh) {
-        //console.log(duck);
+    ducky.load('/models/duck3.js', function(mesh) {
 
         mesh.scale.set(duckScale, duckScale, duckScale);
 
@@ -210,12 +249,24 @@ function init() {
             //clone the mesh, so we can have moe then one duck
             var meshX = mesh.clone();
 
+            // console.log(meshX.children[1].children[0].material.color)
+
             ducks[i] = meshX;
+
+
+            ducks[i].children[1].children[0].material = new THREE.MeshLambertMaterial({
+                color: '#' + getRandomColor()
+            });
+
+            ducks[i].score = Math.ceil(Math.random() * 20)
 
             // duckTargets
             var box = new THREE.Mesh(
-                new THREE.CubeGeometry( 150, 120, 70, 1, 1, 1 ),
-                new THREE.MeshNormalMaterial({transparent: true, opacity: 0}));
+                new THREE.CubeGeometry(150, 120, 70, 1, 1, 1),
+                new THREE.MeshNormalMaterial({
+                    transparent: true,
+                    opacity: 0
+                }));
 
             duckTargets[i] = box;
             ducks[i].add(box);
@@ -236,7 +287,6 @@ function init() {
             }
 
         };
-
 
         rScale = 2
         ducks[0].position.set(100 * rScale, 0, 0 * rScale);
@@ -294,9 +344,9 @@ function init() {
         ducks[23].position.set(70 * rScale, 0, -70 * rScale);
         ducks[23].rotation.set(0, deg2rad(315), 0);
 
-
-
     });
+
+
 
 
     //Little Fishing Man
@@ -308,7 +358,7 @@ function init() {
     var fishingRod;
     rodPivot.position.set(0, 140, -70)
 
-    makeCrossAndSetPosition(fisherObject, rodPivot.position.x, rodPivot.position.y, rodPivot.position.z)
+    // makeCrossAndSetPosition(fisherObject, rodPivot.position.x, rodPivot.position.y, rodPivot.position.z)
 
     var fishermen = new THREE.ObjectLoader();
     var fisherMenScale = 0.45;
@@ -317,7 +367,7 @@ function init() {
         //the fishing rod
         fishingRod = fisherMesh.children[0].children[0];
         fishingRod.position.set(0, 125, -95);
-        fishingRod.scale.set(1,1.4,1)
+        fishingRod.scale.set(1, 1.4, 1)
         rodPivot.rotation.y = deg2rad(0);
         rodPivot.add(fishingRod);
 
@@ -388,13 +438,17 @@ function init() {
 
     //move up once, so the line is correct
     // moveRodStrings('up');
-    var box = new THREE.Mesh(new THREE.CubeGeometry( 10, 160, 10, 1, 1, 1 ), new THREE.MeshBasicMaterial( {color: 0xEE5500} ));
-    box.position.set(pondCenterX-80, pondCenterY+130, pondCenterZ);
-    box.rotation.set(0,0,deg2rad(36))
+    var box = new THREE.Mesh(new THREE.CubeGeometry(10, 160, 10, 1, 1, 1), new THREE.MeshBasicMaterial({
+        color: 0xEE5500
+    }));
+    box.position.set(pondCenterX - 80, pondCenterY + 130, pondCenterZ);
+    box.rotation.set(0, 0, deg2rad(36))
     // scene.add(box);
     //
     updateNonPhysiStringsWithThePositionsOfThePhysiStrings();
+
 }
+
 
 function onWindowResize() {
 
@@ -411,13 +465,15 @@ function onWindowResize() {
 
 function animate() {
 
-    if(!gameOver){
+    if (!gameOver) {
 
         render();
 
         requestAnimationFrame(animate);
 
         scene.simulate();
+
+        moveRodStrings('nothing');
 
     }
     // controls.update();
@@ -435,7 +491,9 @@ function render() {
         duckPivot3.rotation.y += 0.004;
         sky.rotation.y -= 0.002;
 
-    } catch (e) {}
+    } catch (e) {
+        console.log(e);
+    }
 
     stats.update();
 
@@ -449,7 +507,7 @@ var movementUp = 0;
 var movementDown = 0;
 var toOutside = 0;
 
-function moveRodStrings(direction){
+function moveRodStrings(direction) {
     switch (direction) {
         case 'up':
             rodPivot.rotation.x += deg2rad(1);
@@ -462,27 +520,26 @@ function moveRodStrings(direction){
         case 'right':
             break;
         case 'nothing':
-            rodPivot.rotation.x += 0;
+            rodPivot.rotation.x += 0.0000000000001;
             break;
     }
 
 
-    var rotation = reduceTo360(rad2deg(rodPivot.rotation.x)+54);
+    var rotation = reduceTo360(rad2deg(rodPivot.rotation.x) + 54);
     // console.log(Math.round(rotation));
     setRodAndStringPosition(rotation);
 }
 
-function setRodAndStringPosition(rotation){
+function setRodAndStringPosition(rotation) {
     var zSet = 0;
     var xSet = 0;
 
     var rodLengthFromPivot = 160;
 
-    var xPos = (Math.cos(deg2rad(rotation))*rodLengthFromPivot);
-    var yPos = (Math.sin(deg2rad(rotation))*rodLengthFromPivot);
+    var xPos = (Math.cos(deg2rad(rotation)) * rodLengthFromPivot);
+    var yPos = (Math.sin(deg2rad(rotation)) * rodLengthFromPivot);
 
-    stringLord.position.set(
-        -(192 + xPos),
+    stringLord.position.set(-(192 + xPos),
         86 + yPos,
         fisherObject.position.z
     );
@@ -516,6 +573,60 @@ function handleKeyDown(e) {
             checkCollision();
             break;
     }
+
+
+}
+
+function showScore(posX, posY, posZ, score, color) {
+    var materialFront = new THREE.MeshBasicMaterial({
+        color: color,
+        transparent: true,
+        opacity: 1
+    });
+    var materialSide = new THREE.MeshBasicMaterial({
+        color: '#FFF',
+        transparent: true,
+        opacity: 0.5
+    });
+    var materialArray = [materialFront, materialSide];
+    var textGeom = new THREE.TextGeometry(score, {
+        size: 10,
+        height: 4,
+        curveSegments: 3,
+        font: "helvetiker",
+        weight: "bold",
+        style: "normal",
+        bevelThickness: 0,
+        bevelSize: 0,
+        bevelEnabled: false,
+        material: 0,
+        extrudeMaterial: 1
+    });
+    var textMaterial = new THREE.MeshFaceMaterial(materialArray);
+    var textMesh = new THREE.Mesh(textGeom, textMaterial);
+    textGeom.computeBoundingBox();
+    var textWidth = textGeom.boundingBox.max.x - textGeom.boundingBox.min.x;
+    textMesh.position.set(posX, posY, posZ);
+    textMesh.rotation.set(0, 3.141592653, 0);
+    // textMesh.rotation.y = helpMe.calculate('rad', 30);
+    scene.add(textMesh);
+
+    var positionInterval = setInterval(function() {
+        textMesh.position.y += 0.4;
+    }, 20);
+    var opacityInterval;
+
+    setTimeout(function() {
+        opacityInterval = setInterval(function() {
+            textMesh.material.materials[0].opacity -= .1;
+            textMesh.material.materials[1].opacity -= .1;
+        }, 100)
+    }, 1000);
+
+    setTimeout(function() {
+        clearInterval(positionInterval)
+        clearInterval(opacityInterval)
+    }, 3000)
 
 
 }
@@ -555,13 +666,13 @@ function makeCrossAndSetPosition(objectToAddTo, x, y, z) {
 
 }
 
-function checkCollision(){
+function checkCollision() {
 
-        score -= 5;
+    score -= 3;
 
-        var stringsYouCanCatchWith = [strings[6],strings[17],strings[20] ]
+    var stringsYouCanCatchWith = [strings[6], strings[17], strings[20]]
 
-        console.log('stringX ->', strings[17].position.x)
+    console.log('stringX ->', strings[17].position.x)
 
 
     duckPivot1.updateMatrixWorld();
@@ -571,93 +682,131 @@ function checkCollision(){
     var marge = 15;
 
     for (var i = 0; i < ducks.length; i++) {
-            // duckTargets[i].scale.y += 100;
-            ducks[i].updateMatrixWorld();
-            var vector = new THREE.Vector3();
-            vector.setFromMatrixPosition( duckTargets[i].matrixWorld );
+        // duckTargets[i].scale.y += 100;
+        ducks[i].updateMatrixWorld();
+        var vector = new THREE.Vector3();
+        vector.setFromMatrixPosition(duckTargets[i].matrixWorld);
 
-            var strX =  strings[6].position.x;
-            var strY =  strings[6].position.y;
-            var strZ =  strings[6].position.z;
+        var strX = strings[6].position.x;
+        var strY = strings[6].position.y;
+        var strZ = strings[6].position.z;
 
-            var strX2 =  strings[17].position.x;
-            var strY2 =  strings[17].position.y;
-            var strZ2 =  strings[17].position.z;
+        var strX2 = strings[17].position.x;
+        var strY2 = strings[17].position.y;
+        var strZ2 = strings[17].position.z;
 
-            var strX3 =  strings[20].position.x;
-            var strY3 =  strings[20].position.y;
-            var strZ3 =  strings[20].position.z;
+        var strX3 = strings[20].position.x;
+        var strY3 = strings[20].position.y;
+        var strZ3 = strings[20].position.z;
 
 
-                //check for collisions on first fat string
-                if(vector.x < strX + marge && vector.x > strX - marge){
-                    if(vector.z < strZ + marge && vector.z > strZ - marge){
-                        if(vector.y < strY + marge && vector.y > strY - marge){
-                            console.log('x+z+y-hit');
-                            removeDuck(ducks[i]);
-                            // scene.remove(ducks[i]);
-                        }
-                    }
+        //check for collisions on first fat string
+        if (vector.x < strX + marge && vector.x > strX - marge) {
+            if (vector.z < strZ + marge && vector.z > strZ - marge) {
+                if (vector.y < strY + marge && vector.y > strY - marge) {
+                    console.log('x+z+y-hit');
+                    removeDuck(ducks[i]);
+                    // scene.remove(ducks[i]);
                 }
+            }
+        }
 
-                //check for collisions on second fat string
-                if(vector.x < strX2 + marge && vector.x > strX2 - marge){
-                    if(vector.z < strZ2 + marge && vector.z > strZ2 - marge){
-                        if(vector.y < strY2 + marge && vector.y > strY2 - marge){
-                            console.log('x+z+y-hit');
-                            removeDuck(ducks[i]);
-                            // scene.remove(ducks[i]);
-                        }
-                    }
+        //check for collisions on second fat string
+        if (vector.x < strX2 + marge && vector.x > strX2 - marge) {
+            if (vector.z < strZ2 + marge && vector.z > strZ2 - marge) {
+                if (vector.y < strY2 + marge && vector.y > strY2 - marge) {
+                    console.log('x+z+y-hit');
+                    removeDuck(ducks[i]);
+                    // scene.remove(ducks[i]);
                 }
+            }
+        }
 
-                //check for collisions on third fat string
-                if(vector.x < strX3 + marge && vector.x > strX3 - marge){
-                    if(vector.z < strZ3 + marge && vector.z > strZ3 - marge){
-                        if(vector.y < strY3 + marge && vector.y > strY3 - marge){
-                            console.log('x+z+y-hit');
-                            removeDuck(ducks[i]);
-                            // scene.remove(ducks[i]);
-                        }
-                    }
+        //check for collisions on third fat string
+        if (vector.x < strX3 + marge && vector.x > strX3 - marge) {
+            if (vector.z < strZ3 + marge && vector.z > strZ3 - marge) {
+                if (vector.y < strY3 + marge && vector.y > strY3 - marge) {
+                    console.log('x+z+y-hit');
+                    removeDuck(ducks[i]);
+                    // scene.remove(ducks[i]);
                 }
+            }
+        }
 
 
 
-        };
-
-        updateScoreInfo();
-}
-
-function removeDuck(duck){
-    duckPivot1.remove(duck);
-    duckPivot2.remove(duck);
-    duckPivot3.remove(duck);
-
-    score += 15;
-    ducksRemaining --;
-    timeRemaining += 2;
+    };
 
     updateScoreInfo();
 }
 
-function updateNonPhysiStringsWithThePositionsOfThePhysiStrings(){
+function removeDuck(duck) {
+
+    if (!duck.killed) {
+
+        duck.killed = true;
+
+        var pos = new THREE.Vector3();
+        pos.setFromMatrixPosition(duck.matrixWorld);
+
+        var color = duck.children[1].children[0].material.color;
+        color = '#' + rgbToHex(color.r * 255, color.g * 255, color.b * 255);
+
+        showScore(pos.x, pos.y + 10, pos.z - 10, duck.score, color)
+
+
+        score += duck.score;
+
+        killTheDuck(duck);
+
+        ducksRemaining--;
+        if (ducksRemaining == 0) {
+
+            setTimeout(function() {
+                endGame();
+            }, 2000);
+        };
+        timeRemaining += 2;
+
+        updateScoreInfo();
+    }
+}
+
+function killTheDuck(duck) {
+    var intval = setInterval(function() {
+        duck.position.y += 0.5
+        duck.scale.x = duck.scale.x * 0.9;
+        duck.scale.y = duck.scale.y * 0.9;
+        duck.scale.z = duck.scale.z * 0.9;
+        // duck.rotation.z += 0.1
+    }, 20)
+
+    setTimeout(function() {
+        duckPivot1.remove(duck);
+        duckPivot2.remove(duck);
+        duckPivot3.remove(duck);
+        clearInterval(intval);
+    }, 2000)
+
+}
+
+function updateNonPhysiStringsWithThePositionsOfThePhysiStrings() {
     for (var i = 0; i < strings.length; i++) {
-        nonPhysiStrings[i].position.set(strings[i].position.x,strings[i].position.y, strings[i].position.z)
-        nonPhysiStrings[i].rotation.set(strings[i].rotation.x,strings[i].rotation.y, strings[i].rotation.z)
+        nonPhysiStrings[i].position.set(strings[i].position.x, strings[i].position.y, strings[i].position.z)
+        nonPhysiStrings[i].rotation.set(strings[i].rotation.x, strings[i].rotation.y, strings[i].rotation.z)
     };
 
-    setTimeout(function(){
+    setTimeout(function() {
         updateNonPhysiStringsWithThePositionsOfThePhysiStrings();
-    }, 1000/30)
+    }, 1000 / 30)
 }
 
 
-function updateScoreInfo(){
+function updateScoreInfo() {
 
- $('.info .score').html(score);
- $('.info .ducks_remaining .ducks').html(ducksRemaining);
- $('.info .time_remaining .time').html(timeRemaining);
+    $('.info .score').html(score);
+    $('.info .ducks_remaining .ducks').html(ducksRemaining);
+    $('.info .time_remaining .time').html(timeRemaining);
 
 }
 
@@ -666,29 +815,29 @@ var gameOver = false;
 
 startGame();
 
-function startGame(){
+function startGame() {
     gameStarted = true;
     scoreTick();
 };
 
-function endGame(){
+function endGame() {
     gameOver = true;
 };
 
 
 
-function scoreTick(){
+function scoreTick() {
 
-    if(timeRemaining == 0){
+    if (timeRemaining == 0) {
         endGame();
     }
 
-    if(gameStarted && timeRemaining > 0){
+    if (gameStarted && timeRemaining > 0) {
 
         timeRemaining -= 1;
         updateScoreInfo();
 
-        setTimeout(function(){
+        setTimeout(function() {
             scoreTick();
         }, 1000)
     }

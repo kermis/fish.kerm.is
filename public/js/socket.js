@@ -73,15 +73,15 @@ var socketController = {
 
         var genURL = this.currentURL+'/mobile/#' + room;
         // Render the QR code on a newly created img element
-        var img = qr.image(genURL);
-        $('.instruct').html(img); // Re-render the QR code on an existing element
-        // $('.instruct').parent().css('text-align','center')
-        $('.instruct').attr('style','background-color:white; padding: 15px 0 0 15px; position: absolute; left:200px;')
-        qr.image({
-            image: img,
-            value: genURL,
-            size: 5,
-            level: 'H'
+        $('.room_id').html(room);
+
+        $('.instruct').qrcode({
+            text: genURL,
+            render: "canvas", // 'canvas' or 'table'. Default value is 'canvas'
+            background: "#FFFFFF",
+            foreground: "#000000",
+            width: 200,
+            height: 200
         });
     }
 

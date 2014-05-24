@@ -2,58 +2,17 @@
 
 <head>
     <title>Kerm.is</title>
-    <style>
-    .instruct {
-        /*display: none;*/
-        position: absolute;
-        top:80px;
-        left:0;
-        padding:5px;
-        background-white;
-        z-index: 1000;
-        height: 100px;
-        color: white;
-        font-family: helvetica
-    }
-    .debug {
-        opacity:0.4;
-        position: absolute;
-        top:0;
-        left: 100px;
-        padding:5px;
-        background-white;
-        z-index: 100;
-        height: 100px;
-        font-family: helvetica
-    }
-    .info{
-        width: auto;
-        margin: 20px;
-        position: absolute;
-        top: 0;
-        right: 0;
-        text-align: right;
-        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-        font-size: 1.3rem;
-        line-height: 60%;
-        padding: 15px;
-        border: solid #a1582b 5px;
-        background: #080D55;
-        color: white;
-        -webkit-font-smoothing: antialiased;
-    }
-    </style>
+    <link rel="stylesheet" type="text/css" href="css/styles.css">
 </head>
 
 <body style='margin: 0px; background-color: #bbbbbb; overflow: hidden;'>
 
-    <div style="" class="debug">
+    <div class="overlay">
+        <div class="percentLoaded">0%</div>
+        <div class="progress"></div>
     </div>
-    <div style="" class="instruct">Go to
-        <span class="urlFounded">this website</span>/connect on your iPhone and enter the following code:
-        <span class='roomGenerated'>...</span>
-    </div>
-    <div class="info">
+
+    <div class="info-score">
         <div class="time_remaining"><span class="time">60</span>&nbsp;seconds left</div>
         <br>
         <div class="ducks_remaining"><span class="ducks">24</span>&nbsp;ducks remaining</div>
@@ -62,7 +21,71 @@
         <span class="score"></span>
     </div>
 
-    <!-- <div id="xx" style="width: 200px; height:200px; background: red;"></div> -->
+    <div class="info">
+        <h1 class="title">How do you want to play?</h1>
+        <div class="back-button"><button>Back</button></div>
+        <div class="buttons">
+            <button id="leap" class="choose_button">
+                <p>With the Leap Motion</p>
+                <img src="/img/icons/leap2_inverted.png">
+            </button>
+            <button id="socket" class="choose_button">
+                <p>With my modern smartphone</p>
+                <img src="/img/icons/phone-rod_inverted.png">
+            </button>
+            <button id="keys" class="choose_button">
+                <p>With my arrow keys</p>
+                <img src="/img/icons/eke_inverted.png">
+            </button>
+        </div>
+
+        <div class="chose chose_keys">
+            <h2>Use your <img src="/img/icons/eke_inverted.png"> to control the rod,
+            <br>
+            Press <img src="/img/icons/space_inverted.png" class="space"> to catch the duck.
+            </h2>
+            <br>
+            <button class="play">Play</button>
+        </div>
+        <div class="chose chose_socket">
+            <div class="container pull-left">
+                <h2>Scan the QR Code:
+                    <br><br>
+                    <div class="instruct">
+
+                    </div>
+                </h2>
+            </div>
+            <div class="container pull-right text">
+                <h2>Or go to
+                <br>
+                    <span class="go_to_site">http://f.kerm.is/</span>
+                    <br>
+                     and enter <br><span class="room_id"></span>
+                </h2>
+            </div>
+        </div>
+        <div class="chose chose_leap">
+            <div class="container pull-left">
+                <video width="320" height="240" autoplay loop>
+                    <source src="videos/arm.mp4" type="video/mp4">
+                    <source src="videos/arm.webm" type="video/webm">
+                </video>
+            </div>
+            <div class="container pull-right width-50">
+                <h2>Move your arm up and down
+                <br>to control the fishing rod,
+                <br>Press <img src="/img/icons/space_inverted.png"> to catch the duck
+                </h2>
+            </div>
+            <br>
+            <br>
+            <div class="full-width">
+            <button class="play">Play</button>
+            </div>
+        </div>
+
+    </div>
 
     <canvas id="canvas" style="z-index: 10; display:none;"></canvas>
     <div id="container"></div>
@@ -73,18 +96,28 @@
     <!-- <script src="js/libs/ProtrudingAnaglyphWebGLRenderer.js"></script> -->
     <script src="vendor/three.js/examples/js/Detector.js"></script>
     <script src="vendor/threex.windowresize.js"></script>
-    <script src="js/libs/TrackballControls.js"></script>
-    <script src="js/libs/stats.min.js"></script>
-    <script src="js/libs/qr.min.js"></script>
+    <!-- <script src="js/libs/TrackballControls.js"></script> -->
+
 
     <!-- Socket stuff -->
     <script src="js/libs/socket.io.min.js"></script>
-    <!-- <script src="http://cdn.sockjs.org/sockjs-0.3.min.js"></script> -->
+
+    <!-- Fonts -->
+    <script src="fonts/helvetiker_bold.typeface.js"></script>
+    <script src="fonts/helvetiker_regular.typeface.js"></script>
 
     <!-- jQuery & Leap Stuff -->
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <script src="js/libs/leap-0.5.0.min.js"></script>
     <script src="js/libs/leapController.js"></script>
+
+    <!-- some other stuff -->
+    <script src="js/libs/stats.min.js"></script>
+    <script src="js/libs/qr.min.js"></script>
+
+    <!-- Preload and sound stuff -->
+    <script src="//code.createjs.com/preloadjs-0.4.1.min.js"></script>
+    <script src="//code.createjs.com/soundjs-0.5.2.min.js"></script>
 
     <!-- Physics stuff -->
     <script src="js/libs/physi.js"></script>
@@ -93,6 +126,7 @@
 
     <!-- our own JS -->
     <script src="js/helpers.js"></script>
+    <script src="js/UI.js"></script>
     <script src="js/main.js"></script>
     <script src="js/leap.js"></script>
     <script src="js/socket.js"></script>
