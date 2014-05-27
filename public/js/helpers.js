@@ -35,3 +35,32 @@ function rgbToHex(r,g,b){
         return new Array(7-h.length).join("0")+h
     })(bin.toString(16).toUpperCase())
 }
+
+function makeCrossAndSetPosition(objectToAddTo, x, y, z) {
+    var geometry = new THREE.CubeGeometry(1, 100, 1)
+    var material = new THREE.MeshBasicMaterial()
+    var stick = new THREE.Mesh(geometry, material)
+    stick.position = new THREE.Vector3(x, y, z);
+
+    stick2 = stick.clone();
+    stick2.rotation.x = deg2rad(90);
+
+    stick3 = stick.clone();
+    stick3.rotation.z = deg2rad(90);
+
+    objectToAddTo.add(stick);
+    objectToAddTo.add(stick2);
+    objectToAddTo.add(stick3);
+
+}
+
+function reduceTo360(angle) {
+    var newAngle = angle;
+    while (newAngle <= 0) {
+        newAngle += 360
+    };
+    while (newAngle >= 360) {
+        newAngle -= 360
+    };
+    return newAngle;
+}

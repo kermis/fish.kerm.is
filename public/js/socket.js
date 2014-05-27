@@ -8,6 +8,7 @@ var socketController = {
     room: '',
     socket: io.connect(this.currentURL),
     phoneObj: { rotX: 0, rotY: 0, rotZ:0},
+    controllerJoined: false,
     init: function() {
 
 
@@ -17,10 +18,6 @@ var socketController = {
         } else {
             this.currentURL = this.loc.protocol + '//' + this.loc.hostname;
         }
-
-        if (debug) {
-            console.log(window.location);
-        };
     },
     connect: function() {
         socketController.socket.on('connect', this.socketConnected);
@@ -36,16 +33,17 @@ var socketController = {
         socketController.socket.emit('message', {
             msg: 'client joined room with ID ' + room
         });
-        if (debug) {
-            console.log('joined room '+ room);
-        }
     },
     socketMessage: function(data) {
         console.log('Incoming message:', data);
+        if(data.msg.indexOf('mobile joined') != -1 && ! socketController.controllerJoined){
+            game.start();
+            socketController.controllerJoined = true;
+        }
     },
     pulled: function(data){
         // console.log(data);
-        checkCollision();
+        duckling.checkCollision();
     },
     socketMotionDataOut: function(data) {
         // console.log('Incoming motionData:', data);
@@ -55,16 +53,13 @@ var socketController = {
 
         $('.debug').html('<br>beta:' + data.beta);
         // phoneObj.rotY = deg2rad(data.alpha);
+
+        if(data){
         var rotation = deg2rad(data.beta)-45;
+            rodPivot.rotation.x = rotation;
+        }
 
-        rodPivot.rotation.x = rotation;
-
-        moveRodStrings('nothing');
-
-        // socketController.phoneObj.rotZ = deg2rad(data.gamma * 1.5);
-        // socketController.phoneObj.rotY = 0;
-
-        // updateRod();
+        rod.moveRodStrings('nothing');
     },
     updateInstructions: function() {
         $('.urlFounded').html(this.currentURL);
@@ -72,12 +67,12 @@ var socketController = {
         $('.instruct').fadeIn('fast')
 
         var genURL = this.currentURL+'/mobile/#' + room;
-        // Render the QR code on a newly created img element
+
         $('.room_id').html(room);
 
         $('.instruct').qrcode({
             text: genURL,
-            render: "canvas", // 'canvas' or 'table'. Default value is 'canvas'
+            render: "canvas",
             background: "#FFFFFF",
             foreground: "#000000",
             width: 200,

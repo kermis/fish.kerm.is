@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 
 <head>
-    <title>Kerm.is</title>
+    <title>Fish</title>
     <link rel="stylesheet" type="text/css" href="css/styles.css">
+    <script src="//use.edgefonts.net/bebas-neue.js"></script>
 </head>
 
 <body style='margin: 0px; background-color: #bbbbbb; overflow: hidden;'>
@@ -12,18 +13,26 @@
         <div class="progress"></div>
     </div>
 
-    <div class="info-score">
-        <div class="time_remaining"><span class="time">60</span>&nbsp;seconds left</div>
-        <br>
-        <div class="ducks_remaining"><span class="ducks">24</span>&nbsp;ducks remaining</div>
-        <br>
-        Score:&nbsp;
-        <span class="score"></span>
+    <div class="ticket-holder">
+        <div class="info-score">
+            <div class="title">Fish.kerm.is</div>
+            <div class="subtitle">Level 1</div>
+            <div class="time_remaining">
+                <span class="time">60</span>&nbsp;seconds left</div>
+            <br>
+            <div class="ducks_remaining">
+                <span class="ducks">24</span>&nbsp;ducks remaining</div>
+            <br>Score:&nbsp;
+            <span class="score"></span>
+            <a href="#" class="next-level-button">next level &rarr;</a>
+        </div>
     </div>
 
     <div class="info">
         <h1 class="title">How do you want to play?</h1>
-        <div class="back-button"><button>Back</button></div>
+        <div class="back-button">
+            <button>Back</button>
+        </div>
         <div class="buttons">
             <button id="leap" class="choose_button">
                 <p>With the Leap Motion</p>
@@ -40,28 +49,46 @@
         </div>
 
         <div class="chose chose_keys">
-            <h2>Use your <img src="/img/icons/eke_inverted.png"> to control the rod,
+            <div class="container pull-left">
+                <h2>Use your
+                    <img src="/img/icons/eke_inverted.png">to control the rod,
+                    <br>Press
+                    <img src="/img/icons/space_inverted.png" class="space">to pull up the duck.
+                </h2>
+            </div>
+            <div class="container pull-right">
+                <img src="img/fishtructions_L.png" class="instruct-img" />
+            </div>
             <br>
-            Press <img src="/img/icons/space_inverted.png" class="space"> to catch the duck.
-            </h2>
-            <br>
-            <button class="play">Play</button>
+            <div class="full-width">
+                <button class="play">Play</button>
+            </div>
         </div>
         <div class="chose chose_socket">
-            <div class="container pull-left">
+            <div class="container pull-left ">
                 <h2>Scan the QR Code:
-                    <br><br>
+                    <br>
+                    <br>
                     <div class="instruct">
 
                     </div>
                 </h2>
             </div>
+            <div class="container pull-center">
+                <br>Press
+                <img src="/img/icons/space_inverted.png" class="icon">
+                <br>to catch the duck
+                <br>when it is near a magnet
+                <br>
+                <img src="/img/fishtructions_R_sm.png" class="instruct-img">
+            </div>
             <div class="container pull-right text">
                 <h2>Or go to
-                <br>
-                    <span class="go_to_site">http://f.kerm.is/</span>
                     <br>
-                     and enter <br><span class="room_id"></span>
+                    <span class="go_to_site">http://f.kerm.is/</span>
+                    <br>and enter
+                    <br>
+                    <span class="room_id"></span>
                 </h2>
             </div>
         </div>
@@ -69,22 +96,29 @@
             <div class="container pull-left">
                 <video width="320" height="240" autoplay loop>
                     <source src="videos/arm.mp4" type="video/mp4">
-                    <source src="videos/arm.webm" type="video/webm">
+                        <source src="videos/arm.webm" type="video/webm">
                 </video>
             </div>
             <div class="container pull-right width-50">
                 <h2>Move your arm up and down
-                <br>to control the fishing rod,
-                <br>Press <img src="/img/icons/space_inverted.png"> to catch the duck
+                    <br>to control the fishing rod,
+                    <br>Press
+                    <img src="/img/icons/space_inverted.png">to catch the duck
+                    <br>when it is near a magnet
+                    <br>
+                    <img src="/img/fishtructions_R_sm.png" class="instruct-img">
                 </h2>
             </div>
             <br>
             <br>
             <div class="full-width">
-            <button class="play">Play</button>
+                <button class="play">Play</button>
             </div>
         </div>
 
+    </div>
+    <div class="pause">
+        ll
     </div>
 
     <canvas id="canvas" style="z-index: 10; display:none;"></canvas>
@@ -92,24 +126,20 @@
 
     <!-- Three.js stuff -->
     <script src='js/libs/three.min.js'></script>
-    <!-- <script src="vendor/require.js/require.js"></script> -->
     <!-- <script src="js/libs/ProtrudingAnaglyphWebGLRenderer.js"></script> -->
     <script src="vendor/three.js/examples/js/Detector.js"></script>
     <script src="vendor/threex.windowresize.js"></script>
-    <!-- <script src="js/libs/TrackballControls.js"></script> -->
 
-
-    <!-- Socket stuff -->
+    <!-- Socket lib -->
     <script src="js/libs/socket.io.min.js"></script>
+    <!-- jQuery -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <!-- Leap lib -->
+    <script src="js/libs/leap-0.5.0.min.js"></script>
 
-    <!-- Fonts -->
+    <!-- Fonts (used in three.js) -->
     <script src="fonts/helvetiker_bold.typeface.js"></script>
     <script src="fonts/helvetiker_regular.typeface.js"></script>
-
-    <!-- jQuery & Leap Stuff -->
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-    <script src="js/libs/leap-0.5.0.min.js"></script>
-    <script src="js/libs/leapController.js"></script>
 
     <!-- some other stuff -->
     <script src="js/libs/stats.min.js"></script>
@@ -121,14 +151,16 @@
 
     <!-- Physics stuff -->
     <script src="js/libs/physi.js"></script>
-    <!-- <script src="js/libs/cannon.min.js"></script> -->
-    <!-- <script src="js/libs/oimo/Oimo.js"></script> -->
 
     <!-- our own JS -->
     <script src="js/helpers.js"></script>
+    <script src="js/builder.js"></script>
+    <script src="js/game.js"></script>
     <script src="js/UI.js"></script>
+    <script src="js/events.js"></script>
+    <script src="js/duckling.js"></script>
+    <script src="js/fishingrod.js"></script>
     <script src="js/main.js"></script>
     <script src="js/leap.js"></script>
     <script src="js/socket.js"></script>
-    <!-- <script src="js/physics.js"></script> -->
 </body>

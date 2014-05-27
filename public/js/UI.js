@@ -38,7 +38,10 @@ $(function(){
 	});
 
 	$('.play').on('click', function(){
-		$('.info').fadeOut();
-		playing = true;
+		game.start();
+	})
+
+	$(document).on('click', '.next-level-button', function(){
+		game.nextLevel();
 	})
 })
