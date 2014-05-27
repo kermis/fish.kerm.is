@@ -141,7 +141,9 @@
     if (room == '') {
         room = location.hash.replace('#', '');
     }
-    //var room = location.hash.replace('#','');
+    if (room == '') {
+        room = 'Please_enter_a_room_on_the_previous_page_' + Math.round(Math.random()*100000);
+    }
 
     var motionD;
 
