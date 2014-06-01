@@ -257,6 +257,16 @@ var builder = {
 
         });
 
+        var shipLoader = new THREE.ObjectLoader();
+        shipLoader.load('/models/pirateship.js', function(mesh){
+        	scene.add(mesh);
+
+        	mesh.scale.set(20,20,20)
+        	mesh.position.set(1600, 100, 2000);
+        	mesh.rotation.y = 3;
+        	mesh.rotation.z = 0.2;
+        })
+
         //
         // lights
         var light = new THREE.HemisphereLight(0xFFE7B3, 1.2)

@@ -32,6 +32,7 @@ var game = {
     endGame: function() {
         var newTicket = $('.info-score').clone();
         newTicket.removeClass('active');
+        newTicket.removeClass('ripping');
 
         rendering = false;
         gameStarted = false;
@@ -40,6 +41,9 @@ var game = {
             volume: 0.3
         });
         setTimeout(function() {
+
+        	//TODO: add level*remaningTime to score
+
             $('.info-score').removeClass('ripping').addClass('big')
             $('.next-level-button').delay(2500).fadeIn()
             $('.ticket-holder').append(newTicket)

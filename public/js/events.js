@@ -38,13 +38,16 @@ function handleKeyDown(e) {
 
                 break;
             case 32:
+            	e.preventDefault();
                 duckling.checkCollision();
                 break;
         }
     }
 
     if (e.keyCode == 27) {
+    	e.preventDefault();
         game.pause()
+        return false;
     }
 
 }

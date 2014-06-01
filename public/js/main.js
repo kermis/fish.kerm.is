@@ -32,6 +32,9 @@ $(function() {
         id: "ducky",
         src: "/models/duck.js"
     }, {
+        id: "ship",
+        src: "/models/pirateship.js"
+    }, {
         id: "visser",
         src: "/models/visser.js"
     }, {
