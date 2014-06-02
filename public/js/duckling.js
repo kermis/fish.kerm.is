@@ -98,6 +98,11 @@ var duckling = {
 
         if (!duckHit) {
             score -= 5;
+            if(score > 5){
+                game.showScore(strings[17].position.x, strings[17].position.y, strings[17].position.z, '-5', '#000000')
+            }else{
+                game.showScore(strings[17].position.x, strings[17].position.y, strings[17].position.z, '0', '#000000')
+            }
         } else {
             timeRemaining += 2;
         }

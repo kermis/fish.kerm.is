@@ -1,5 +1,6 @@
 var rod = {
     setRodAndStringPosition: function(rotation) {
+
         var zSet = 0;
         var xSet = 0;
 
@@ -13,6 +14,7 @@ var rod = {
             fisherObject.position.z
         );
         stringLord.__dirtyPosition = true;
+
     },
     updateNonPhysiStringsWithThePositionsOfThePhysiStrings: function() {
         for (var i = 0; i < strings.length; i++) {
@@ -27,10 +29,14 @@ var rod = {
     moveRodStrings: function(direction) {
         switch (direction) {
             case 'up':
-                rodPivot.rotation.x += deg2rad(1);
+                if(rodPivot.rotation.x < 0.57){
+                    rodPivot.rotation.x += deg2rad(1);
+                }
                 break;
             case 'down':
-                rodPivot.rotation.x -= deg2rad(1);
+                if(rodPivot.rotation.x > -1.29){
+                    rodPivot.rotation.x -= deg2rad(1);
+                }
                 break;
             case 'left':
                 break;
