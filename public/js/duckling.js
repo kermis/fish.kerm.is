@@ -78,6 +78,9 @@ var duckling = {
         duckPivot3.updateMatrixWorld();
 
         var marge = 15;
+        if(playingWithPhone){
+            marge = 20;
+        }
 
         for (var i = 0; i < ducks.length; i++) {
             ducks[i].updateMatrixWorld();

@@ -85,7 +85,7 @@ function init() {
     scene = new Physijs.Scene({
         fixedTimeStep: 1 / 120
     });
-    scene.setGravity(new THREE.Vector3(0, -1400, 0));
+    scene.setGravity(new THREE.Vector3(0, -3000, 0));
 
     builder.buildScene();
 
