@@ -2,13 +2,15 @@
 
 <head>
     <title>Fish</title>
-    <link rel="stylesheet" type="text/css" href="css/styles.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
     <script src="//use.edgefonts.net/bebas-neue.js"></script>
 </head>
 
 <body style='margin: 0px; background-color: #bbbbbb; overflow: hidden;'>
 
+    <!-- Preloader overlay -->
     <div class="overlay">
+        <div class="logo"></div>
         <div class="percentLoaded">0%</div>
         <div class="progress"></div>
     </div>
@@ -28,33 +30,37 @@
         </div>
     </div>
 
+     <!-- Information overlay -->
     <div class="info">
-        <h1 class="title">How do you want to play?</h1>
+
+        <h1 class="title">Which controller do you want to use?</h1>
+
         <div class="back-button">
             <button>Back</button>
         </div>
+
         <div class="buttons">
             <button id="leap" class="choose_button">
-                <p>With the Leap Motion</p>
-                <img src="/img/icons/leap2_inverted.png">
+                <p>A Leap Motion</p>
+                <img src="/img/leap2_inverted.png">
             </button>
             <button id="socket" class="choose_button">
-                <p>With my modern smartphone</p>
-                <img src="/img/icons/phone-rod_inverted.png">
+                <p>A smartphone</p>
+                <img src="/img/phone-rod_inverted.png">
             </button>
-            <button id="keys" class="choose_button">
-                <p>With my arrow keys</p>
-                <img src="/img/icons/eke_inverted.png">
+            <button id="computer" class="choose_button">
+                <p>A computer</p>
+                <img src="/img/eke_inverted.png">
             </button>
         </div>
 
-        <div class="chose chose_keys">
+        <div class="chose hide two chose_computer">
             <div class="container pull-left">
-                <h2>Use your
-                    <img src="/img/icons/eke_inverted.png">to control the rod,
+                <p>Use your
+                    <img class="keycontroll" src="/img/icons/eke_inverted.png">to control the rod,
                     <br>Press
-                    <img src="/img/icons/space_inverted.png" class="space">to pull up the duck.
-                </h2>
+                    <img class="keycontroll" src="/img/icons/space_inverted.png" class="space">to pull up the duck.
+                </p>
             </div>
             <div class="container pull-right">
                 <img src="img/fishtructions_L.png" class="instruct-img" />
@@ -64,15 +70,24 @@
                 <button class="play">Play</button>
             </div>
         </div>
-        <div class="chose chose_socket">
+        <div class="chose  hide three chose_socket">
             <div class="container pull-left ">
-                <h2>Scan the QR Code:
+                <p>Scan the QR Code:
                     <br>
                     <br>
                     <div class="instruct">
 
                     </div>
-                </h2>
+                </p>
+            </div>
+            <div class="container pull-right text">
+                <p>Or go to
+                    <br>
+                    <span class="go_to_site">http://f.kerm.is/</span>
+                    <br>and enter
+                    <br>
+                    <span class="room_id"></span>
+                </p>
             </div>
             <div class="container pull-center">
                 <br>Press
@@ -82,32 +97,24 @@
                 <br>
                 <img src="/img/fishtructions_R_sm.png" class="instruct-img">
             </div>
-            <div class="container pull-right text">
-                <h2>Or go to
-                    <br>
-                    <span class="go_to_site">http://f.kerm.is/</span>
-                    <br>and enter
-                    <br>
-                    <span class="room_id"></span>
-                </h2>
-            </div>
+
         </div>
-        <div class="chose chose_leap">
+        <div class="chose hide  two chose_leap">
             <div class="container pull-left">
                 <video width="320" height="240" autoplay loop>
                     <source src="videos/arm.mp4" type="video/mp4">
                         <source src="videos/arm.webm" type="video/webm">
                 </video>
             </div>
-            <div class="container pull-right width-50">
-                <h2>Move your arm up and down
+            <div class="container ">
+                <p>Move your arm up and down
                     <br>to control the fishing rod,
                     <br>Press
-                    <img src="/img/icons/space_inverted.png">to catch the duck
+                    <img class="icon" src="/img/icons/space_inverted.png">to catch the duck
                     <br>when it is near a magnet
                     <br>
                     <img src="/img/fishtructions_R_sm.png" class="instruct-img">
-                </h2>
+                </p>
             </div>
             <br>
             <br>

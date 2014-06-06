@@ -19,19 +19,19 @@ $(function(){
 				$('.buttons').hide();
 				$('.chose_leap').show();
 				break;
-			case 'keys':
+			case 'computer':
 				playingWithKeys = true;
 				$('.buttons').hide();
-				$('.chose_keys').show();
+				$('.chose_computer').show();
 				break;
 		}
 	})
 
 	$('.back-button').on('click', function(){
-
+		$('.info .title').html('Which controller do you want to use?')
 		$('.chose_socket').hide();
 		$('.chose_leap').hide();
-		$('.chose_keys').hide();
+		$('.chose_computer').hide();
 
 		$('.buttons').show();
 		$('.back-button').hide()
