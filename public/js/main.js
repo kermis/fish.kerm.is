@@ -5,7 +5,7 @@ var timeRemaining = 120;
 
 var container, stats, camera, controls, scene, renderer, cross, rod, sky;
 var duckPivot1, duckPivot2, duckPivot3, rodPivot, fisherObject, stringLord;
-var playing, gameStarted, gameOver = false; speedMultiplier = 1, level = 1;
+var playing, gameStarted, playingWithPhone, gameOver = false; speedMultiplier = 1, level = 1;
 
 var ducks = [], leapObj = [], strings = [], duckTargets = [], nonPhysiStrings = [], strings = [];
 
@@ -88,7 +88,7 @@ function init() {
     scene = new Physijs.Scene({
         fixedTimeStep: 1 / 120
     });
-    scene.setGravity(new THREE.Vector3(0, -3000, 0));
+    scene.setGravity(new THREE.Vector3(0, -2000, 0));
 
     builder.buildScene();
 
