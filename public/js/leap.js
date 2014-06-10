@@ -12,13 +12,18 @@ var leapController = {
         controller = new Leap.Controller();
         controller.connect();
 
-        controller.on('connect', this.controllerConnected)
+        controller.on('streamingStarted', this.controllerConnected)
+        controller.on('streamingStopped', this.controllerDisconnected)
         controller.on('animationFrame', this.onAnimationframe)
     },
     controllerConnected: function() {
         console.log('Leap connected')
+        showNotification('Leap connected')
         $('.debug').html('To play with the Leap, use your arm as a fishing rod and press the space bar to pull the fish up')
         this.leapConnected = true;
+    },
+    controllerDisconnected: function() {
+        showNotification('Leap disconnected')
     },
     onAnimationframe: function(frame) {
         count++;

@@ -1,7 +1,7 @@
 var game = {
 	music: null,
     start: function() {
-        $('.info').fadeOut();
+        $('.info').removeClass('slide_down');
         rendering = true;
         playing = true;
         gameStarted = true;

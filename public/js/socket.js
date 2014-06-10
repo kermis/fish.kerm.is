@@ -21,6 +21,7 @@ var socketController = {
     },
     connect: function() {
         socketController.socket.on('connect', this.socketConnected);
+        socketController.socket.on('mobile_disconnect', this.socketDisconnected);
         socketController.socket.on('message', this.socketMessage);
         socketController.socket.on('pulled', this.pulled);
         socketController.socket.on('motionDataOut', this.socketMotionDataOut);
@@ -34,11 +35,17 @@ var socketController = {
             msg: 'client joined room with ID ' + room
         });
     },
+    socketDisconnected: function(data){
+        if(data.room == room){
+            showNotification('Phone Connection lost')
+        }
+    },
     socketMessage: function(data) {
         console.log('Incoming message:', data);
         if(data.msg.indexOf('mobile joined') != -1 && ! socketController.controllerJoined){
             game.start();
             socketController.controllerJoined = true;
+            showNotification('Phone connected')
         }
     },
     pulled: function(data){
@@ -73,8 +80,8 @@ var socketController = {
         $('.instruct').qrcode({
             text: genURL,
             render: "canvas",
-            background: "#FFFFFF",
-            foreground: "#000000",
+            background: "#EFEFEF",
+            foreground: "#f26f40",
             width: 200,
             height: 200
         });

@@ -77,6 +77,11 @@ io.sockets.on('connection', function(socket) {
 		io.sockets.in(roomio).emit('pulled', data);
 		// io.sockets.emit('motionDataOut', data);
 	})
+
+    socket.on('disconnect', function(){
+        // console.log('Disconnected', roomio)
+        socket.broadcast.to(roomio).emit('mobile_disconnect', {room: roomio});
+    });
 });
 
 // now, it's easy to send a message to just the clients in a given room
