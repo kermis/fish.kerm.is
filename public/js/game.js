@@ -1,5 +1,6 @@
 var game = {
-	music: null,
+    music: null,
+    totalDucksHit: 0,
     start: function() {
         $('.info').removeClass('slide_down');
         rendering = true;
@@ -17,16 +18,16 @@ var game = {
     },
     pause: function() {
         if (playing) {
-        	game.music.pause();
-        	playing = false;
-        	rendering = false;
+            game.music.pause();
+            playing = false;
+            rendering = false;
             $('.pause').fadeIn(100);
-        }else{
-        	$('.pause').fadeOut(100);
-        	playing = true;
-        	rendering = true;
-        	game.music.resume();
-        	scoreTick();
+        } else {
+            $('.pause').fadeOut(100);
+            playing = true;
+            rendering = true;
+            game.music.resume();
+            scoreTick();
         }
     },
     endGame: function() {
@@ -42,7 +43,7 @@ var game = {
         });
         setTimeout(function() {
 
-        	//TODO: add level*remaningTime to score
+            //TODO: add level*remaningTime to score
 
             $('.info-score').removeClass('ripping').addClass('big')
             $('.next-level-button').delay(2500).fadeIn()
@@ -72,20 +73,24 @@ var game = {
             level++;
             timeRemaining = Math.round(200 / level);
 
-            builder.removeDucks();
-            builder.buildDucks();
+            if (level <= 10) {
+                builder.removeDucks();
+                builder.buildDucks();
 
-            ducksRemaining = 24;
+                ducksRemaining = 24;
 
-            speedMultiplier += 0.4;
+                speedMultiplier += 0.4;
 
-            playing = true;
-            gameStarted = true;
-            rendering = true;
+                playing = true;
+                gameStarted = true;
+                rendering = true;
 
 
-            game.updateScoreInfo();
-            $('.info-score').addClass('active');
+                game.updateScoreInfo();
+                $('.info-score').addClass('active');
+            } else {
+                game.over();
+            }
 
             scoreTick();
         }, 500)
@@ -148,5 +153,14 @@ var game = {
         }, 3000)
 
 
+    },
+    over: function() {
+        $('.score-final').html(score);
+
+        var msgString = 'You have a score of ' + score + ' and you have captured  ' + game.totalDucksHit + ' ducks.'
+
+        $('.message-final').html(msgString);
+
+        $('.game-over').addClass('slide-up')
     }
 }

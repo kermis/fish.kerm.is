@@ -44,6 +44,27 @@ $(function(){
 	$(document).on('click', '.next-level-button', function(){
 		game.nextLevel();
 	})
+
+	$('.score-submit').on('click', function(){
+
+		$('.score-submit').hide();
+		$('.game-over').append('<span class="score-message">Sharing Score</span>');
+
+		$('.score-final').html(score);
+
+		$.post( "http://kermisdatabasevanbartenrobbert.herokuapp.com/addhighscore/fish",
+			{ 	name: name,
+				score: score,
+			} )
+		.done(function(){
+			$('.score-submit').hide();
+			$('.score-message').html('score succesully shared.')
+
+		}).fail(function(){
+			$('.score-message').html('something went wrong, please try again').delay(4000).fadeOut();
+			$('.score-submit').show();
+		});
+	})
 })
 
 function showNotification(text){

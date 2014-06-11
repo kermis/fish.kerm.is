@@ -34,6 +34,7 @@ var duckling = {
 
 
             score += duck.score;
+            game.totalDucksHit++;
 
             duckling.killTheDuck(duck);
 
