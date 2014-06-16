@@ -8,12 +8,23 @@
     <meta name="viewport" content="initial-scale=1, user-scalable=no">
 
     <style type="text/css">
+ @font-face {
+        font-family: bebas-neue;
+            src:
+                local('Bebas Neue'),
+                local('Bebas Neue Regular'),
+                url('/css/fonts/bebasneue-webfont.ttf'),
+                url('/css/fonts/bebasneue-webfont.eot'),
+                url('/css/fonts/bebasneue-webfont.svg'),
+                url('/css/fonts/bebasneue-webfont.woff');
+        }
     body, html {
         margin:0;
         padding: 0;
         width: 100%;
         height: 100%;
-        font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;
+        /*font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;*/
+        font-family: bebas-neue, sans-serif;
         overflow: hidden;
         background: #8ECCE3;
         -webkit-touch-callout: none;
@@ -22,6 +33,7 @@
         -moz-user-select: none;
         -ms-user-select: none;
         user-select: none;
+        -webkit-font-smoothing: antialiased;
     }
     #wrap {
         width: 50%;
@@ -67,7 +79,8 @@
         border: none;
         font-size: 1.5rem;
         background: rgba(255, 255, 255, 0.6);
-        font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;
+        /*font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;*/
+        font-family: bebas-neue, sans-serif;
         font-weight: 800;
         color: rgba(0, 0, 0, 0.7);
         -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
@@ -121,7 +134,7 @@
         <button class="round" id="pull">Pull up</button>
 
     </div>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="/js/libs/jquery-2.1.1.min.js"></script>
     <script src="/libs/tappy.js"></script>
     <script src="/js/libs/socket.io.min.js"></script>
     <script>
@@ -142,7 +155,7 @@
         room = location.hash.replace('#', '');
     }
     if (room == '') {
-        room = 'Please_enter_a_room_on_the_previous_page_' + Math.round(Math.random()*100000);
+        room = 'EmptyRoom_' + Math.round(Math.random()*100000);
     }
 
     var motionD;

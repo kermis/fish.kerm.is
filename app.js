@@ -7,9 +7,6 @@ var path = require('path');
 // Create a new instance of Express
 var app = express();
 
-// Import the Anagrammatix game file.
-// var game = require('./game');
-
 // Create a simple Express application
 app.configure(function() {
     // Turn down the logging activity
@@ -52,34 +49,26 @@ io.sockets.on('connection', function(socket) {
     	room = room;
     	roomio = room;
         socket.join(roomio);
-        console.log('room room:', roomio)
     });
 
     socket.on('message', function(data){
-    	console.log('currentroom: ', roomio);
-		console.log(data);
+
 		io.sockets.in(roomio).emit('message', data);
 	})
 
 	socket.on('test', function(data){
-		console.log(data);
 		io.sockets.in(roomio).emit('test', data);
 	})
 
 	socket.on('motionData',function(data){
-        // console.log(data);
         io.sockets.in(roomio).emit('motionDataOut', data);
-        // io.sockets.emit('motionDataOut', data);
     })
 
     socket.on('pull',function(data){
-		console.log('pull', data);
 		io.sockets.in(roomio).emit('pulled', data);
-		// io.sockets.emit('motionDataOut', data);
 	})
 
     socket.on('disconnect', function(){
-        // console.log('Disconnected', roomio)
         socket.broadcast.to(roomio).emit('mobile_disconnect', {room: roomio});
     });
 });
