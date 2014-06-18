@@ -112,11 +112,11 @@ function init() {
     container = document.getElementById('container');
     container.appendChild(renderer.domElement);
 
-    stats = new Stats();
-    stats.domElement.style.position = 'absolute';
-    stats.domElement.style.top = '0px';
-    stats.domElement.style.zIndex = 100;
-    container.appendChild(stats.domElement);
+    // stats = new Stats();
+    // stats.domElement.style.position = 'absolute';
+    // stats.domElement.style.top = '0px';
+    // stats.domElement.style.zIndex = 100;
+    // container.appendChild(stats.domElement);
 
     window.addEventListener('resize', onWindowResize, false);
 
@@ -150,7 +150,7 @@ function render() {
         console.log(e);
     }
 
-    stats.update();
+    // stats.update();
 
 }
 
