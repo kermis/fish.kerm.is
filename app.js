@@ -8,13 +8,13 @@ var path = require('path');
 var app = express();
 
 // Create a simple Express application
-app.configure(function() {
-    // Turn down the logging activity
-    app.use(express.logger('dev'));
+// app.configure(function() {
+// Turn down the logging activity
+app.use(express.logger('dev'));
 
-    // Serve static html, js, css, and image files from the 'public' directory
-    app.use(express.static(path.join(__dirname, 'public')));
-});
+// Serve static html, js, css, and image files from the 'public' directory
+app.use(express.static(path.join(__dirname, 'public')));
+// });
 
 app.get('/', function(req, res) {
     res.send('app is running <br><br><br>&copy;Kerm.is 2014')
@@ -23,13 +23,20 @@ app.get('/', function(req, res) {
 var port = process.env.PORT || 3000;
 
 // Create a Node.js based http server on port 8080
-var server = require('http').createServer(app).listen(port);
+var http = require('http')
+var server = http.createServer(app);
+var socketio = require('socket.io');
 
 // Create a Socket.IO server and attach it to the http server
-var io = require('socket.io').listen(server);
+var io = socketio.listen(server);
+
+// Listen on port 8080
+server.listen(port, () => {
+    console.log('Socket & web server running on port ' + port);
+});
 
 // Reduce the logging output of Socket.IO
-io.set('log level', 1);
+// io.set('log level', 1);
 
 
 // attach Socket.io to our HTTP server
